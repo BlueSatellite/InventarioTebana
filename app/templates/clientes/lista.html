@@ -1,42 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Clientes - Cerveceria{% endblock %}
+{% block title %}Clientes - Tebana{% endblock %}
 {% block content %}
 
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">Clientes</h1>
-    <a href="{{ url_for('clientes.nuevo') }}" class="bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nuevo Cliente</a>
+<div class="page-header">
+    <h1>Clientes</h1>
+    <a href="{{ url_for('clientes.nuevo') }}" class="btn btn-primary">+ Nuevo</a>
 </div>
 
 {% if clientes %}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-gray-500">
-            <tr>
-                <th class="text-left px-4 py-3">Nombre</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Contacto</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in clientes %}
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="px-4 py-3">
-                    <a href="{{ url_for('clientes.editar', id=c.id) }}" class="text-blue-600 font-medium">{{ c.nombre }}</a>
-                </td>
-                <td class="px-4 py-3 hidden md:table-cell text-gray-600">{{ c.contacto or '-' }}</td>
-                <td class="px-4 py-3 hidden md:table-cell">
-                    {% if c.tipo %}<span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ c.tipo }}</span>{% else %}-{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% else %}
-<div class="text-center py-16 text-gray-400">
-    <p class="text-4xl mb-3">&#x1F465;</p>
-    <p>No hay clientes registrados.</p>
-</div>
-{% endif %}
+<div class="card"><div class="card-body" style="padding:0"><div class="table-wrap"><table>
+    <thead><tr><th>Nombre</th><th class="hide-mobile">Contacto</th><th class="hide-mobile">Tipo</th></tr></thead>
+    <tbody>{% for c in clientes %}<tr>
+        <td><a href="{{ url_for('clientes.editar', id=c.id) }}" style="font-weight:500">{{ c.nombre }}</a></td>
+        <td class="hide-mobile text-muted text-sm">{{ c.contacto or '-' }}</td>
+        <td class="hide-mobile"><span class="badge badge-neutral">{{ c.tipo or '-' }}</span></td>
+    </tr>{% endfor %}</tbody>
+</table></div></div></div>
+{% else %}<div class="empty-state"><div class="empty-icon">&#x1F465;</div><p>No hay clientes registrados.</p></div>{% endif %}
 
 {% endblock %}

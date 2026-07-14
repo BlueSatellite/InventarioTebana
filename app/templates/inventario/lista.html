@@ -1,88 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Inventario - Cerveceria{% endblock %}
+{% block title %}Inventario - Tebana{% endblock %}
 {% block content %}
 
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">Inventario</h1>
-    <a href="{{ url_for('inventario.nuevo') }}" class="bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Ingrediente</a>
+<div class="page-header">
+    <h1>Inventario</h1>
+    <a href="{{ url_for('inventario.nuevo') }}" class="btn btn-primary">+ Ingrediente</a>
 </div>
 
-<div class="flex flex-wrap gap-2 mb-4">
-    <a href="{{ url_for('inventario.lista') }}" class="px-3 py-1.5 rounded-full text-xs font-medium {{ 'bg-gray-800 text-white' if not tipo_filtro and not alerta else 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">Todos</a>
-    {% for t in tipos %}
-    <a href="{{ url_for('inventario.lista', tipo=t) }}" class="px-3 py-1.5 rounded-full text-xs font-medium {{ 'bg-gray-800 text-white' if tipo_filtro == t else 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">{{ t|capitalize }}</a>
-    {% endfor %}
-    <a href="{{ url_for('inventario.lista', alerta='minimo') }}" class="px-3 py-1.5 rounded-full text-xs font-medium {{ 'bg-red-600 text-white' if alerta else 'bg-red-50 text-red-600 hover:bg-red-100' }}">&#x26A0; Stock bajo</a>
+<div class="filter-pills">
+    <a href="{{ url_for('inventario.lista') }}" class="pill {{ 'active' if not tipo_filtro and not alerta }}">Todos</a>
+    {% for t in tipos %}<a href="{{ url_for('inventario.lista', tipo=t) }}" class="pill {{ 'active' if tipo_filtro == t }}">{{ t|capitalize }}</a>{% endfor %}
+    <a href="{{ url_for('inventario.lista', alerta='minimo') }}" class="pill {{ 'danger active' if alerta else 'danger' }}">Stock bajo</a>
 </div>
 
 {% if ingredientes %}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-gray-500">
-            <tr>
-                <th class="text-left px-4 py-3">Nombre</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Tipo</th>
-                <th class="text-left px-4 py-3">Stock</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Precio</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ing in ingredientes %}
-            <tr class="border-b border-gray-100 hover:bg-gray-50 {{ 'bg-red-50' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo }}">
-                <td class="px-4 py-3">
-                    <a href="{{ url_for('inventario.editar', id=ing.id) }}" class="font-medium {{ 'text-red-700' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo else 'text-blue-600' }}">
-                        {{ ing.nombre }}
-                        {% if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo %}
-                        <span class="text-red-500 text-xs ml-1">&#x26A0;</span>
-                        {% endif %}
-                    </a>
-                    {% if ing.fecha_caducidad and ing.fecha_caducidad <= hoy %}
-                    <span class="text-red-400 text-xs ml-1" title="Vencido">&#x23F3;</span>
-                    {% endif %}
-                </td>
-                <td class="px-4 py-3 hidden md:table-cell">
-                    <span class="px-2 py-0.5 rounded-full text-xs
-                        {% if ing.tipo == 'malta' %}bg-amber-100 text-amber-700
-                        {% elif ing.tipo == 'lupulo' %}bg-green-100 text-green-700
-                        {% elif ing.tipo == 'levadura' %}bg-blue-100 text-blue-700
-                        {% else %}bg-gray-100 text-gray-600{% endif %}">
-                        {{ ing.tipo }}
-                    </span>
-                </td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium {{ 'text-red-600' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo }}">{{ "%.2f"|format(ing.cantidad) }} {{ ing.unidad }}</span>
-                        {% if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo %}
-                        <span class="text-red-500 text-xs">(min: {{ "%.1f"|format(ing.stock_minimo) }})</span>
-                        {% endif %}
-                    </div>
-                    <div class="flex gap-1 mt-1">
-                        <form method="POST" action="{{ url_for('inventario.ajustar_stock', id=ing.id) }}" class="flex gap-1 items-center">
-                            <input type="hidden" name="operacion" value="sumar">
-                            <input type="number" name="cantidad" step="0.01" class="w-12 border border-gray-200 rounded px-1 py-0.5 text-xs" placeholder="+">
-                            <button type="submit" class="text-xs text-green-600 hover:underline">+</button>
-                        </form>
-                        <form method="POST" action="{{ url_for('inventario.ajustar_stock', id=ing.id) }}" class="flex gap-1 items-center">
-                            <input type="hidden" name="operacion" value="restar">
-                            <input type="number" name="cantidad" step="0.01" class="w-12 border border-gray-200 rounded px-1 py-0.5 text-xs" placeholder="-">
-                            <button type="submit" class="text-xs text-red-600 hover:underline">-</button>
-                        </form>
-                    </div>
-                </td>
-                <td class="px-4 py-3 hidden md:table-cell text-gray-600">
-                    {% if ing.precio %}${{ "%.2f"|format(ing.precio) }}{% else %}-{% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-body" style="padding:0">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Nombre</th><th class="hide-mobile">Tipo</th><th>Stock</th><th class="hide-mobile">Precio</th></tr></thead>
+                <tbody>
+                    {% for ing in ingredientes %}
+                    <tr style="{{ 'background:#FDF6E3' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo }}">
+                        <td><a href="{{ url_for('inventario.editar', id=ing.id) }}" style="font-weight:500;{{ 'color:var(--color-warning)' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo }}">{{ ing.nombre }}</a>
+                            {% if ing.fecha_caducidad and ing.fecha_caducidad <= hoy %}<span style="color:var(--color-danger);font-size:0.75rem;margin-left:0.25rem" title="Vencido">&#x23F3;</span>{% endif %}
+                        </td>
+                        <td class="hide-mobile"><span class="badge {{ 'badge-warning' if ing.tipo=='malta' else ('badge-success' if ing.tipo=='lupulo' else ('badge-info' if ing.tipo=='levadura' else 'badge-neutral')) }}">{{ ing.tipo }}</span></td>
+                        <td>
+                            <div style="font-weight:500;{{ 'color:var(--color-warning)' if ing.stock_minimo > 0 and ing.cantidad <= ing.stock_minimo }}">{{ "%.2f"|format(ing.cantidad) }} {{ ing.unidad }}</div>
+                            <div class="stock-buttons" style="margin-top:0.25rem">
+                                <form method="POST" action="{{ url_for('inventario.ajustar_stock', id=ing.id) }}"><input type="hidden" name="operacion" value="sumar"><input type="number" name="cantidad" step="0.01" placeholder="+"><button type="submit" class="btn-plus">+</button></form>
+                                <form method="POST" action="{{ url_for('inventario.ajustar_stock', id=ing.id) }}"><input type="hidden" name="operacion" value="restar"><input type="number" name="cantidad" step="0.01" placeholder="-"><button type="submit" class="btn-minus">-</button></form>
+                            </div>
+                        </td>
+                        <td class="hide-mobile text-sm">{{ ('$%.2f'|format(ing.precio)) if ing.precio else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% else %}
-<div class="text-center py-16 text-gray-400">
-    <p class="text-4xl mb-3">&#x1F331;</p>
-    <p>No hay ingredientes en el inventario. Agrega el primero.</p>
-    <a href="{{ url_for('inventario.nuevo') }}" class="inline-block mt-4 bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Ingrediente</a>
-</div>
+<div class="empty-state"><div class="empty-icon">&#x1F331;</div><p>No hay ingredientes en el inventario.</p><a href="{{ url_for('inventario.nuevo') }}" class="btn btn-primary">+ Ingrediente</a></div>
 {% endif %}
 
 {% endblock %}

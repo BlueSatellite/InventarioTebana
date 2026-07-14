@@ -1,84 +1,32 @@
 {% extends "base.html" %}
-{% block title %}Pedido - Cerveceria{% endblock %}
+{% block title %}Pedido #{{ pedido.id }} - Tebana{% endblock %}
 {% block content %}
 
-<div class="flex items-center justify-between mb-4">
-    <div class="flex items-center">
-        <a href="{{ url_for('ventas.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
-        <h1 class="text-2xl font-bold text-gray-800">Pedido #{{ pedido.id }}</h1>
+<div class="page-header">
+    <div>
+        <a href="{{ url_for('ventas.lista') }}" class="back-link">&larr; Pedidos</a>
+        <h1 style="margin-top:0.25rem">Pedido #{{ pedido.id }}</h1>
     </div>
-    <div class="flex gap-2">
-        <form method="POST" action="{{ url_for('ventas.eliminar', id=pedido.id) }}" onsubmit="return confirm('Eliminar este pedido?');">
-            <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Eliminar</button>
+    <form method="POST" action="{{ url_for('ventas.eliminar', id=pedido.id) }}" onsubmit="return confirm('Eliminar?');"><button type="submit" class="btn btn-danger btn-sm">Eliminar</button></form>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Cliente</div><div class="stat-value" style="font-size:1rem">{{ pedido.cliente.nombre if pedido.cliente else '-' }}</div></div>
+    <div class="stat-card"><div class="stat-label">Fecha</div><div class="stat-value" style="font-size:1rem">{{ pedido.fecha.strftime('%d/%m/%Y') if pedido.fecha else '-' }}</div></div>
+    <div class="stat-card"><div class="stat-label">Estado</div>
+        <form method="POST" action="{{ url_for('ventas.actualizar_estado', id=pedido.id) }}" style="display:flex;gap:0.5rem;margin-top:0.25rem">
+            <select name="estado" class="form-select" style="padding:0.3rem 0.5rem;font-size:0.8125rem"><option value="pendiente" {{ 'selected' if pedido.estado=='pendiente' }}>Pendiente</option><option value="entregado" {{ 'selected' if pedido.estado=='entregado' }}>Entregado</option><option value="pagado" {{ 'selected' if pedido.estado=='pagado' }}>Pagado</option><option value="cancelado" {{ 'selected' if pedido.estado=='cancelado' }}>Cancelado</option></select>
+            <button type="submit" class="btn btn-primary btn-sm">OK</button>
         </form>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-xl shadow p-4">
-        <div class="text-xs text-gray-500">Cliente</div>
-        <div class="font-medium text-gray-800 mt-1">{{ pedido.cliente.nombre if pedido.cliente else '-' }}</div>
-        {% if pedido.cliente and pedido.cliente.contacto %}
-        <div class="text-xs text-gray-400">{{ pedido.cliente.contacto }}</div>
-        {% endif %}
-    </div>
-    <div class="bg-white rounded-xl shadow p-4">
-        <div class="text-xs text-gray-500">Fecha</div>
-        <div class="font-medium text-gray-800 mt-1">{{ pedido.fecha.strftime('%d/%m/%Y') if pedido.fecha else '-' }}</div>
-    </div>
-    <div class="bg-white rounded-xl shadow p-4">
-        <div class="text-xs text-gray-500">Estado</div>
-        <form method="POST" action="{{ url_for('ventas.actualizar_estado', id=pedido.id) }}" class="flex gap-2 mt-1">
-            <select name="estado" class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
-                <option value="pendiente" {{ 'selected' if pedido.estado == 'pendiente' }}>Pendiente</option>
-                <option value="entregado" {{ 'selected' if pedido.estado == 'entregado' }}>Entregado</option>
-                <option value="pagado" {{ 'selected' if pedido.estado == 'pagado' }}>Pagado</option>
-                <option value="cancelado" {{ 'selected' if pedido.estado == 'cancelado' }}>Cancelado</option>
-            </select>
-            <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition">Actualizar</button>
-        </form>
-    </div>
-</div>
+<div class="card"><div class="card-body" style="padding:0"><div class="table-wrap"><table>
+    <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead>
+    <tbody>{% for l in pedido.lineas %}<tr><td>{{ l.producto }}</td><td>{{ "%.1f"|format(l.cantidad) }}</td><td>${{ "%.2f"|format(l.precio_unitario) }}</td><td style="font-weight:600">${{ "%.2f"|format(l.cantidad*l.precio_unitario) }}</td></tr>{% endfor %}</tbody>
+    <tfoot><tr style="background:var(--color-bg);font-weight:700"><td colspan="3" style="text-align:right">Total</td><td style="font-size:1.125rem">${{ "%.2f"|format(pedido.total) }}</td></tr></tfoot>
+</table></div></div></div>
 
-<div class="bg-white rounded-xl shadow overflow-hidden mb-6">
-    <h2 class="font-bold text-gray-700 px-4 py-3 bg-gray-50 border-b">Productos</h2>
-    {% if pedido.lineas %}
-    <table class="w-full text-sm">
-        <thead class="text-gray-500">
-            <tr>
-                <th class="text-left px-4 py-2">Producto</th>
-                <th class="text-left px-4 py-2">Cantidad</th>
-                <th class="text-left px-4 py-2">Precio</th>
-                <th class="text-left px-4 py-2">Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for linea in pedido.lineas %}
-            <tr class="border-b border-gray-100">
-                <td class="px-4 py-2">{{ linea.producto }}</td>
-                <td class="px-4 py-2">{{ "%.1f"|format(linea.cantidad) }}</td>
-                <td class="px-4 py-2">${{ "%.2f"|format(linea.precio_unitario) }}</td>
-                <td class="px-4 py-2 font-medium">${{ "%.2f"|format(linea.cantidad * linea.precio_unitario) }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr class="bg-gray-50">
-                <td colspan="3" class="px-4 py-3 text-right font-bold">Total</td>
-                <td class="px-4 py-3 font-bold text-lg">${{ "%.2f"|format(pedido.total) }}</td>
-            </tr>
-        </tfoot>
-    </table>
-    {% else %}
-    <p class="text-sm text-gray-400 text-center py-6">Sin productos registrados.</p>
-    {% endif %}
-</div>
-
-{% if pedido.notas %}
-<div class="bg-white rounded-xl shadow p-4">
-    <h2 class="font-bold text-gray-700 mb-2">Notas</h2>
-    <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ pedido.notas }}</p>
-</div>
-{% endif %}
+{% if pedido.notas %}<div class="card" style="margin-top:1rem"><div class="card-body"><p class="text-sm whitespace-pre-wrap">{{ pedido.notas }}</p></div></div>{% endif %}
 
 {% endblock %}

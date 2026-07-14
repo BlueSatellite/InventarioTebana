@@ -1,115 +1,130 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - Cerveceria{% endblock %}
+{% block title %}Inicio - Tebana Lab. Cervecero{% endblock %}
 {% block content %}
 
-<h1 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h1>
-
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-    <div class="bg-white rounded-xl shadow p-4 text-center">
-        <div class="text-3xl font-bold text-beer-600">{{ total_recetas }}</div>
-        <div class="text-xs text-gray-500 mt-1">Recetas</div>
-    </div>
-    <div class="bg-white rounded-xl shadow p-4 text-center">
-        <div class="text-3xl font-bold text-blue-600">{{ total_lotes }}</div>
-        <div class="text-xs text-gray-500 mt-1">Lotes totales</div>
-    </div>
-    <div class="bg-white rounded-xl shadow p-4 text-center">
-        <div class="text-3xl font-bold text-green-600">{{ lotes_activos }}</div>
-        <div class="text-xs text-gray-500 mt-1">Lotes activos</div>
-    </div>
-    <div class="bg-white rounded-xl shadow p-4 text-center">
-        <div class="text-3xl font-bold text-beer-600">{{ lotes_listos }}</div>
-        <div class="text-xs text-gray-500 mt-1">Lotes listos</div>
-    </div>
+<div class="page-header">
+    <h1>Laboratorio Cervecero</h1>
 </div>
 
-<div class="grid md:grid-cols-2 gap-4 mb-6">
-    {% if alertas_stock %}
-    <div class="bg-red-50 border border-red-200 rounded-xl p-4">
-        <h2 class="font-bold text-red-800 mb-2 text-sm">&#x26A0; Stock bajo minimo</h2>
-        <ul class="space-y-1">
-            {% for ing in alertas_stock %}
-            <li class="text-sm text-red-700 flex justify-between">
-                <span>{{ ing.nombre }}</span>
-                <span class="font-medium">{{ "%.1f"|format(ing.cantidad) }} {{ ing.unidad }} (min: {{ "%.1f"|format(ing.stock_minimo) }})</span>
-            </li>
-            {% endfor %}
-        </ul>
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_recetas }}</div>
+        <div class="stat-label">Recetas</div>
     </div>
-    {% else %}
-    <div class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center justify-center">
-        <span class="text-green-700 text-sm">&#x2714; Todo el stock esta sobre el minimo</span>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_lotes }}</div>
+        <div class="stat-label">Lotes totales</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color:var(--color-accent)">{{ lotes_activos }}</div>
+        <div class="stat-label">Activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color:var(--color-success)">{{ lotes_listos }}</div>
+        <div class="stat-label">Listos</div>
+    </div>
+    {% if pedidos_pendientes %}
+    <div class="stat-card">
+        <div class="stat-value" style="color:var(--color-warning)">{{ pedidos_pendientes }}</div>
+        <div class="stat-label">Pedidos pend.</div>
     </div>
     {% endif %}
+</div>
 
-    {% if barriles_prestados %}
-    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-        <h2 class="font-bold text-yellow-800 mb-2 text-sm">&#x1F4E6; Barriles prestados ({{ barriles_prestados|length }})</h2>
-        <ul class="space-y-1">
-            {% for b in barriles_prestados %}
-            <li class="text-sm text-yellow-700 flex justify-between">
-                <span>{{ b.nombre }}</span>
-                <span>en {{ b.cliente.nombre if b.cliente else '?' }}</span>
-            </li>
-            {% endfor %}
-        </ul>
+<div class="two-col">
+    <div class="card">
+        <div class="card-header">
+            <h2>{% if alertas_stock %}Stock bajo minimo{% else %}Inventario{% endif %}</h2>
+            <a href="{{ url_for('inventario.lista') }}" class="btn btn-ghost btn-sm">Ver todo</a>
+        </div>
+        <div class="card-body">
+            {% if alertas_stock %}
+            <ul style="list-style:none;padding:0;">
+                {% for ing in alertas_stock %}
+                <li style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--color-border);font-size:0.875rem;">
+                    <span style="font-weight:500">{{ ing.nombre }}</span>
+                    <span style="color:var(--color-danger);font-size:0.8125rem;">
+                        {{ "%.1f"|format(ing.cantidad) }} {{ ing.unidad }}
+                        <span style="color:var(--color-muted)">/ min {{ "%.1f"|format(ing.stock_minimo) }}</span>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div style="text-align:center;padding:1rem;color:var(--color-success);font-size:0.875rem;">
+                Todo el stock sobre el minimo
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% else %}
-    <div class="bg-white rounded-xl shadow p-4 flex items-center justify-center">
-        <span class="text-gray-500 text-sm">&#x2714; Todos los barriles estan en casa</span>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>{% if barriles_prestados %}Barriles prestados{% else %}Barriles{% endif %}</h2>
+            <a href="{{ url_for('barriles.lista') }}" class="btn btn-ghost btn-sm">Ver todo</a>
+        </div>
+        <div class="card-body">
+            {% if barriles_prestados %}
+            <ul style="list-style:none;padding:0;">
+                {% for b in barriles_prestados %}
+                <li style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--color-border);font-size:0.875rem;">
+                    <span style="font-weight:500">{{ b.nombre }}</span>
+                    <span style="color:var(--color-warning);font-size:0.8125rem;">
+                        {{ b.cliente.nombre if b.cliente else '?' }}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div style="text-align:center;padding:1rem;color:var(--color-muted);font-size:0.875rem;">
+                Todos los barriles en casa
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% endif %}
 </div>
 
 {% if lotes_recientes %}
-<div class="bg-white rounded-xl shadow p-4 mb-6">
-    <h2 class="font-bold text-gray-800 mb-3 text-sm">Lotes recientes</h2>
-    <table class="w-full text-sm">
-        <thead>
-            <tr class="text-left text-gray-500 border-b">
-                <th class="pb-2">Nombre</th>
-                <th class="pb-2">Receta</th>
-                <th class="pb-2">Estado</th>
-                <th class="pb-2">Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lote in lotes_recientes %}
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="py-2">
-                    <a href="{{ url_for('lotes.ver', id=lote.id) }}" class="text-blue-600 font-medium">{{ lote.nombre }}</a>
-                </td>
-                <td class="py-2">{{ lote.receta.nombre if lote.receta else '-' }}</td>
-                <td class="py-2">
-                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                        {% if lote.estado == 'fermentando' %}bg-blue-100 text-blue-700
-                        {% elif lote.estado == 'listo' %}bg-green-100 text-green-700
-                        {% elif lote.estado == 'vendido' %}bg-gray-100 text-gray-600
-                        {% else %}bg-yellow-100 text-yellow-700{% endif %}">
-                        {{ lote.estado }}
-                    </span>
-                </td>
-                <td class="py-2 text-gray-500">{{ lote.fecha_inicio.strftime('%d/%m/%Y') if lote.fecha_inicio else '-' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card mt-4">
+    <div class="card-header">
+        <h2>Lotes recientes</h2>
+        <a href="{{ url_for('lotes.lista') }}" class="btn btn-ghost btn-sm">Ver todos</a>
+    </div>
+    <div class="card-body" style="padding:0">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Receta</th>
+                        <th>Estado</th>
+                        <th class="hide-mobile">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lote in lotes_recientes %}
+                    <tr>
+                        <td><a href="{{ url_for('lotes.ver', id=lote.id) }}" style="font-weight:500">{{ lote.nombre }}</a></td>
+                        <td class="text-muted text-sm">{{ lote.receta.nombre if lote.receta else '-' }}</td>
+                        <td>
+                            {% set badge = 'badge-success' if lote.estado in ['listo','envasado'] else ('badge-info' if lote.estado == 'fermentando' else ('badge-neutral' if lote.estado == 'vendido' else 'badge-warning')) %}
+                            <span class="badge {{ badge }}">{{ lote.estado }}</span>
+                        </td>
+                        <td class="hide-mobile text-muted text-sm">{{ lote.fecha_inicio.strftime('%d/%m/%Y') if lote.fecha_inicio else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endif %}
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-    <a href="{{ url_for('recetas.nueva') }}" class="bg-beer-500 hover:bg-beer-600 text-white rounded-xl shadow p-4 text-center text-sm font-medium transition">
-        + Nueva Receta
-    </a>
-    <a href="{{ url_for('lotes.nuevo') }}" class="bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow p-4 text-center text-sm font-medium transition">
-        + Nuevo Lote
-    </a>
-    <a href="{{ url_for('ventas.nuevo') }}" class="bg-green-500 hover:bg-green-600 text-white rounded-xl shadow p-4 text-center text-sm font-medium transition">
-        + Nueva Venta
-    </a>
-    <a href="{{ url_for('inventario.nuevo') }}" class="bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow p-4 text-center text-sm font-medium transition">
-        + Ingrediente
-    </a>
+<div class="mt-4" style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+    <a href="{{ url_for('recetas.nueva') }}" class="btn btn-primary">+ Nueva Receta</a>
+    <a href="{{ url_for('lotes.nuevo') }}" class="btn btn-secondary">+ Nuevo Lote</a>
+    <a href="{{ url_for('ventas.nuevo') }}" class="btn btn-secondary">+ Nueva Venta</a>
+    <a href="{{ url_for('inventario.nuevo') }}" class="btn btn-secondary">+ Ingrediente</a>
 </div>
 
 {% endblock %}

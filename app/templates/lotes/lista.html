@@ -1,61 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Lotes - Cerveceria{% endblock %}
+{% block title %}Lotes - Tebana{% endblock %}
 {% block content %}
 
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold text-gray-800">Lotes</h1>
-    <a href="{{ url_for('lotes.nuevo') }}" class="bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nuevo Lote</a>
+<div class="page-header">
+    <h1>Lotes</h1>
+    <a href="{{ url_for('lotes.nuevo') }}" class="btn btn-primary">+ Nuevo Lote</a>
 </div>
 
-<div class="flex flex-wrap gap-2 mb-4">
-    <a href="{{ url_for('lotes.lista') }}" class="px-3 py-1.5 rounded-full text-xs font-medium {{ 'bg-gray-800 text-white' if not estado_filtro else 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">Todos</a>
-    {% for e in estados %}
-    <a href="{{ url_for('lotes.lista', estado=e) }}" class="px-3 py-1.5 rounded-full text-xs font-medium {{ 'bg-gray-800 text-white' if estado_filtro == e else 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">{{ e|capitalize }}</a>
-    {% endfor %}
+<div class="filter-pills">
+    <a href="{{ url_for('lotes.lista') }}" class="pill {{ 'active' if not estado_filtro }}">Todos</a>
+    {% for e in estados %}<a href="{{ url_for('lotes.lista', estado=e) }}" class="pill {{ 'active' if estado_filtro == e }}">{{ e|capitalize }}</a>{% endfor %}
 </div>
 
 {% if lotes %}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-gray-500">
-            <tr>
-                <th class="text-left px-4 py-3">Nombre</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Receta</th>
-                <th class="text-left px-4 py-3">Estado</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Vol.</th>
-                <th class="text-left px-4 py-3 hidden md:table-cell">Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for lote in lotes %}
-            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                <td class="px-4 py-3">
-                    <a href="{{ url_for('lotes.ver', id=lote.id) }}" class="text-blue-600 font-medium">{{ lote.nombre }}</a>
-                </td>
-                <td class="px-4 py-3 hidden md:table-cell text-gray-600">{{ lote.receta.nombre if lote.receta else '-' }}</td>
-                <td class="px-4 py-3">
-                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                        {% if lote.estado == 'fermentando' %}bg-blue-100 text-blue-700
-                        {% elif lote.estado == 'listo' %}bg-green-100 text-green-700
-                        {% elif lote.estado == 'vendido' %}bg-gray-100 text-gray-600
-                        {% elif lote.estado == 'coccion' %}bg-orange-100 text-orange-700
-                        {% else %}bg-yellow-100 text-yellow-700{% endif %}">
-                        {{ lote.estado }}
-                    </span>
-                </td>
-                <td class="px-4 py-3 hidden md:table-cell">{{ "%.0f"|format(lote.volumen_objetivo_l) if lote.volumen_objetivo_l else '-' }} L</td>
-                <td class="px-4 py-3 hidden md:table-cell text-gray-500">{{ lote.fecha_inicio.strftime('%d/%m/%Y') if lote.fecha_inicio else '-' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-body" style="padding:0">
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Nombre</th><th class="hide-mobile">Receta</th><th>Estado</th><th class="hide-mobile">Vol.</th><th class="hide-mobile">Fecha</th></tr></thead>
+                <tbody>
+                    {% for lote in lotes %}
+                    <tr>
+                        <td><a href="{{ url_for('lotes.ver', id=lote.id) }}" style="font-weight:500">{{ lote.nombre }}</a></td>
+                        <td class="hide-mobile text-muted text-sm">{{ lote.receta.nombre if lote.receta else '-' }}</td>
+                        <td><span class="badge {{ 'badge-success' if lote.estado in ['listo','envasado'] else ('badge-info' if lote.estado == 'fermentando' else ('badge-neutral' if lote.estado == 'vendido' else ('badge-warning' if lote.estado == 'coccion' else 'badge-warning'))) }}">{{ lote.estado }}</span></td>
+                        <td class="hide-mobile text-sm">{{ "%.0f"|format(lote.volumen_objetivo_l) if lote.volumen_objetivo_l else '-' }} L</td>
+                        <td class="hide-mobile text-muted text-sm">{{ lote.fecha_inicio.strftime('%d/%m/%Y') if lote.fecha_inicio else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% else %}
-<div class="text-center py-16 text-gray-400">
-    <p class="text-4xl mb-3">&#x1F4E6;</p>
-    <p>No hay lotes todavia. Crea el primero.</p>
-    <a href="{{ url_for('lotes.nuevo') }}" class="inline-block mt-4 bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nuevo Lote</a>
-</div>
+<div class="empty-state"><div class="empty-icon">&#x1F4E6;</div><p>No hay lotes todavia.</p><a href="{{ url_for('lotes.nuevo') }}" class="btn btn-primary">+ Nuevo Lote</a></div>
 {% endif %}
 
 {% endblock %}

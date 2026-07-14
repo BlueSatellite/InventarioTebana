@@ -1,83 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Nuevo Pedido - Cerveceria{% endblock %}
+{% block title %}Nuevo Pedido - Tebana{% endblock %}
 {% block content %}
 
-<div class="flex items-center mb-4">
-    <a href="{{ url_for('ventas.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
-    <h1 class="text-2xl font-bold text-gray-800">Nuevo Pedido</h1>
+<div class="page-header">
+    <div><a href="{{ url_for('ventas.lista') }}" class="back-link">&larr; Pedidos</a><h1 style="margin-top:0.25rem">Nuevo Pedido</h1></div>
 </div>
 
-<form method="POST" class="space-y-4 max-w-2xl">
-    <div class="bg-white rounded-xl shadow p-6">
-        <div>
-            <label class="block text-sm font-medium text-gray-600 mb-1">Cliente *</label>
-            <select name="cliente_id" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none bg-white">
-                <option value="">Seleccionar cliente...</option>
-                {% for c in clientes %}
-                <option value="{{ c.id }}">{{ c.nombre }}</option>
-                {% endfor %}
+<form method="POST">
+    <div class="card" style="margin-bottom:1rem;max-width:640px"><div class="card-body">
+        <div class="form-group"><label class="form-label">Cliente *</label>
+            <select name="cliente_id" required class="form-select">
+                <option value="">Seleccionar...</option>{% for c in clientes %}<option value="{{ c.id }}">{{ c.nombre }}</option>{% endfor %}
             </select>
-            {% if not clientes %}
-            <p class="text-xs text-red-500 mt-1">Primero debes crear un cliente en Inventario.</p>
-            {% endif %}
+            {% if not clientes %}<p class="text-sm text-muted" style="margin-top:0.25rem">Primero crea un cliente.</p>{% endif %}
         </div>
-    </div>
+    </div></div>
 
-    <div class="bg-white rounded-xl shadow p-6">
-        <h2 class="font-bold text-gray-700 mb-3">Productos</h2>
-        <div id="lineas-container" class="space-y-3">
-            <div class="linea-row grid grid-cols-12 gap-2 items-end border-b border-gray-100 pb-3">
-                <div class="col-span-5">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Producto</label>
-                    <input type="text" name="producto[]" placeholder="Ej: Golden Ale" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Cant.</label>
-                    <input type="number" name="cantidad[]" value="1" step="0.1" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
-                </div>
-                <div class="col-span-3">
-                    <label class="block text-xs font-medium text-gray-500 mb-1">Precio ($)</label>
-                    <input type="number" name="precio_unitario[]" step="0.01" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
-                </div>
-                <div class="col-span-2">
-                    <button type="button" class="eliminar-linea text-red-400 hover:text-red-600 text-lg">&times;</button>
-                </div>
+    <div class="card" style="margin-bottom:1rem"><div class="card-header"><h2>Productos</h2></div><div class="card-body">
+        <div id="lineas-container" style="display:flex;flex-direction:column;gap:0.5rem">
+            <div class="linea-row" style="display:flex;gap:0.5rem;align-items:flex-end;flex-wrap:wrap;padding-bottom:0.75rem;border-bottom:1px solid var(--color-border)">
+                <div style="min-width:120px;flex:2" class="form-group" style="margin-bottom:0"><label class="form-label">Producto</label><input type="text" name="producto[]" placeholder="Ej: Golden Ale" class="form-input"></div>
+                <div style="min-width:60px;flex:0.7" class="form-group" style="margin-bottom:0"><label class="form-label">Cant.</label><input type="number" name="cantidad[]" value="1" step="0.1" class="form-input"></div>
+                <div style="min-width:80px;flex:1" class="form-group" style="margin-bottom:0"><label class="form-label">Precio ($)</label><input type="number" name="precio_unitario[]" step="0.01" class="form-input"></div>
+                <button type="button" class="eliminar-linea btn btn-ghost btn-sm" style="color:var(--color-danger);margin-bottom:0.25rem">&times;</button>
                 <input type="hidden" name="lote_id[]" value="">
             </div>
         </div>
-        <button type="button" id="agregar-linea" class="mt-3 text-sm text-beer-600 hover:text-beer-700 font-medium">
-            + Agregar producto
-        </button>
-    </div>
+        <button type="button" id="agregar-linea" class="btn btn-ghost btn-sm" style="margin-top:0.75rem">+ Agregar producto</button>
+    </div></div>
 
-    <div class="bg-white rounded-xl shadow p-6">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
-        <textarea name="notas" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none"></textarea>
-    </div>
+    <div class="card" style="margin-bottom:1rem;max-width:640px"><div class="card-body">
+        <div class="form-group"><label class="form-label">Notas</label><textarea name="notas" rows="2" class="form-textarea"></textarea></div>
+    </div></div>
 
-    <div class="flex gap-3">
-        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Crear Pedido</button>
-        <a href="{{ url_for('ventas.lista') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+    <div style="display:flex;gap:0.75rem">
+        <button type="submit" class="btn btn-primary">Crear Pedido</button>
+        <a href="{{ url_for('ventas.lista') }}" class="btn btn-secondary">Cancelar</a>
     </div>
 </form>
 
 <script>
-document.getElementById('agregar-linea').addEventListener('click', function() {
-    const container = document.getElementById('lineas-container');
-    const template = container.querySelector('.linea-row').cloneNode(true);
-    template.querySelectorAll('input').forEach(function(inp) { inp.value = ''; });
-    template.querySelector('input[name="cantidad[]"]').value = '1';
-    template.querySelector('.eliminar-linea').addEventListener('click', function() {
-        if (document.querySelectorAll('.linea-row').length > 1) template.remove();
-    });
-    container.appendChild(template);
-});
-
-document.querySelectorAll('.eliminar-linea').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        if (document.querySelectorAll('.linea-row').length > 1) btn.closest('.linea-row').remove();
-    });
-});
+document.getElementById('agregar-linea').addEventListener('click',function(){var c=document.getElementById('lineas-container');var t=c.querySelector('.linea-row').cloneNode(true);t.querySelectorAll('input[type="text"],input[type="number"]').forEach(function(i){i.value=''});t.querySelector('input[name="cantidad[]"]').value='1';t.querySelector('.eliminar-linea').addEventListener('click',function(){if(document.querySelectorAll('.linea-row').length>1)t.remove()});c.appendChild(t)});
+document.querySelectorAll('.eliminar-linea').forEach(function(b){b.addEventListener('click',function(){if(document.querySelectorAll('.linea-row').length>1)b.closest('.linea-row').remove()})});
 </script>
-
 {% endblock %}
