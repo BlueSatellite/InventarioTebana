@@ -6,10 +6,14 @@
     <meta name="theme-color" content="#2D2424">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tebana">
     <meta name="description" content="Tebana Laboratorio Cervecero - Gestion de inventario y recetas">
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
+    <script src="{{ url_for('static', filename='pwa.js') }}" defer></script>
     <title>{% block title %}Tebana Lab. Cervecero{% endblock %}</title>
 </head>
 <body>
