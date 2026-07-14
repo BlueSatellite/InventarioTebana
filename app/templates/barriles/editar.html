@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Editar Barril - Tebana{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div><a href="{{ url_for('barriles.lista') }}" class="back-link">&larr; Barriles</a><h1 style="margin-top:0.25rem">Editar: {{ barril.nombre }}</h1></div>
+</div>
+
+<form method="POST" class="card" style="max-width:500px"><div class="card-body">
+    <div class="form-grid">
+        <div class="form-group"><label class="form-label">Nombre *</label><input type="text" name="nombre" required value="{{ barril.nombre }}" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Capacidad (L)</label><input type="number" name="capacidad_l" value="{{ barril.capacidad_l }}" step="0.1" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Contenido</label><input type="text" name="contenido_actual" value="{{ barril.contenido_actual or '' }}" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Ubicacion en casa</label><input type="text" name="ubicacion" value="{{ barril.ubicacion or '' }}" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+                <option value="disponible" {{ 'selected' if barril.estado == 'disponible' }}>Verde - Disponible (limpio)</option>
+                <option value="sucio" {{ 'selected' if barril.estado == 'sucio' }}>Azul - Sucio en casa</option>
+                <option value="prestado" {{ 'selected' if barril.estado == 'prestado' }}>Rojo - Prestado</option>
+            </select>
+        </div>
+        {% if barril.estado == 'prestado' %}
+        <div class="form-group"><label class="form-label">Prestado a</label><select name="cliente_id" class="form-select">{% for c in clientes %}<option value="{{ c.id }}" {{ 'selected' if barril.cliente_id == c.id }}>{{ c.nombre }}</option>{% endfor %}</select></div>
+        {% endif %}
+    </div>
+    <div style="display:flex;gap:0.75rem;margin-top:1rem">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{{ url_for('barriles.lista') }}" class="btn btn-secondary">Cancelar</a>
+        <form method="POST" action="{{ url_for('barriles.eliminar', id=barril.id) }}" onsubmit="return confirm('Eliminar?');"><button type="submit" class="btn btn-danger">Eliminar</button></form>
+    </div>
+</div></form>
+{% endblock %}

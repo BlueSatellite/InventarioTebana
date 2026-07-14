@@ -10,8 +10,14 @@
     <div class="form-grid">
         <div class="form-group"><label class="form-label">Nombre / ID *</label><input type="text" name="nombre" required placeholder="Ej: Keg #1" class="form-input"></div>
         <div class="form-group"><label class="form-label">Capacidad (L)</label><input type="number" name="capacidad_l" value="20" step="0.1" class="form-input"></div>
-        <div class="form-group"><label class="form-label">Contenido actual</label><input type="text" name="contenido_actual" placeholder="Ej: Golden Ale" class="form-input"></div>
-        <div class="form-group"><label class="form-label">Ubicacion</label><input type="text" name="ubicacion" placeholder="Ej: Camara fria" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Ubicacion en casa</label><input type="text" name="ubicacion" placeholder="Ej: Camara fria, bodega" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Estado inicial</label>
+            <select name="estado" class="form-select">
+                <option value="disponible">Verde - Disponible (limpio)</option>
+                <option value="sucio">Azul - Sucio en casa</option>
+            </select>
+        </div>
+        <div class="form-group"><label class="form-label">Contenido actual (opcional)</label><input type="text" name="contenido_actual" placeholder="Ej: Golden Ale, o vacio" class="form-input"></div>
     </div>
     <div style="display:flex;gap:0.75rem;margin-top:1rem">
         <button type="submit" class="btn btn-primary">Guardar</button>

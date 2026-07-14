@@ -1,0 +1,901 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{fontawesome5}
+
+\geometry{margin=2.2cm}
+\setlength{\headheight}{14.5pt}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue!60!black
+}
+
+\definecolor{beer}{HTML}{8B6914}
+\definecolor{beerlight}{HTML}{C4A44A}
+\definecolor{beerdark}{HTML}{5C4510}
+\definecolor{bgcream}{HTML}{FDFBF7}
+\definecolor{dark}{HTML}{2D2424}
+\definecolor{accent}{HTML}{D4760A}
+\definecolor{success}{HTML}{4A7C59}
+\definecolor{warning}{HTML}{B8860B}
+\definecolor{danger}{HTML}{C0392B}
+\definecolor{info}{HTML}{2874A6}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{dark}}
+  {\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{beer}}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{beerdark}}
+  {\thesubsection}{1em}{}
+
+\newtcolorbox{tipbox}{
+  colback=beer!5!white,
+  colframe=beer!50,
+  arc=4pt,
+  title={\faLightbulb\ Consejo},
+  fonttitle=\bfseries\small\color{beer},
+  before upper={\small}
+}
+
+\newtcolorbox{stepbox}{
+  colback=dark!3!white,
+  colframe=dark!40,
+  arc=4pt,
+  fonttitle=\bfseries\small,
+  before upper={\small}
+}
+
+\newtcolorbox{warnbox}{
+  colback=warning!10!white,
+  colframe=warning!60,
+  arc=4pt,
+  title={\faExclamationTriangle\ Importante},
+  fonttitle=\bfseries\small\color{warning},
+  before upper={\small}
+}
+
+\newtcolorbox{simbox}{
+  colback=accent!5!white,
+  colframe=accent!50,
+  arc=6pt,
+  fonttitle=\bfseries\small\color{accent},
+  before upper={\small},
+  after={\vspace{4pt}}
+}
+
+\newcommand{\appbtn}[1]{%
+  \textcolor{white}{\colorbox{beer}{\footnotesize\sffamily\bfseries\ #1}}%
+}
+\newcommand{\appbtnsec}[1]{%
+  \colorbox{black!10}{\footnotesize\sffamily\ #1}%
+}
+\newcommand{\appmenu}[1]{\texttt{\footnotesize #1}}
+\newcommand{\appfield}[1]{\texttt{\footnotesize\color{beerdark}\textbf{#1}}}
+\newcommand{\appvalue}[1]{\texttt{\footnotesize\color{dark}#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{beer}\sffamily Tebana Laboratorio Cervecero}
+\fancyhead[R]{\small\color{dark}\sffamily Guía de Uso}
+\fancyfoot[C]{\small\color{black!50}\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{beer}\leaders\hrule height \headrulewidth\hfill}}
+
+\begin{document}
+
+% ============================================================
+% PORTADA
+% ============================================================
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\Huge\bfseries\color{dark} Tebana\\[4pt] Laboratorio Cervecero\par}
+\vspace{1cm}
+{\Large\color{beer} Guía de Uso Completa\\[4pt] con Simulación Interactiva\par}
+\vspace{0.5cm}
+{\normalsize\color{black!50} Sistema de gestión de recetas, inventario, producción y ventas\par}
+
+\vspace{2.5cm}
+
+{\color{beer}\rule{10cm}{1.5pt}}
+
+\vspace{1cm}
+
+{\large\faBeer\ \faFlask\ \faBeer}
+
+\vspace{1.5cm}
+
+{\large\color{dark} Julio 2026\par}
+
+\vspace{1cm}
+{\small\color{black!40} Documentación del sistema \texttt{github.com/BlueSatellite/InventarioTebana}\par}
+\end{titlepage}
+
+% ============================================================
+% ÍNDICE
+% ============================================================
+\tableofcontents
+\newpage
+
+% ============================================================
+% CAPÍTULO 1: INTRODUCCIÓN
+% ============================================================
+\chapter{Introducción y acceso}
+
+\section{Bienvenido}
+Tebana Laboratorio Cervecero es un sistema web de gestión integral para tu cervecería artesanal. Te permite manejar recetas con cálculos automáticos, inventario de ingredientes con alertas, seguimiento de lotes de producción con gráficos de fermentación, ventas, clientes y control de barriles. Todo desde tu iPhone o PC, 24 horas al día, sin instalar nada.
+
+\section{Cómo acceder}
+
+La aplicación está disponible en Internet en la dirección:
+
+\begin{center}
+\fbox{\Large\texttt{etacar1nae.pythonanywhere.com}}
+\end{center}
+
+Desde cualquier navegador (Safari, Chrome, Edge) escribí esa dirección y accedés al Dashboard.
+
+\section{Instalar como app en el iPhone}
+
+Para usar la app sin abrir Safari cada vez, agregala a la pantalla de inicio del iPhone:
+
+\begin{enumerate}[leftmargin=*]
+  \item Abrí \textbf{Safari} (no Chrome, tiene que ser Safari) y entrá a la URL de la app.
+  \item Tocá el botón \textbf{Compartir} (icono del cuadradito con flecha hacia arriba).
+  \item Deslizá hacia abajo y tocá \textbf{``Agregar a la pantalla de inicio''}.
+  \item Escribí \textbf{``Tebana''} como nombre y tocá \textbf{Agregar}.
+  \item Listo. Buscá el icono con el logo de Tebana en tu pantalla de inicio. Se abre a pantalla completa como una app nativa.
+\end{enumerate}
+
+\begin{tipbox}
+En Android es similar: abrí Chrome, tocá los tres puntitos del menú, elegí ``Agregar a la pantalla principal''.
+\end{tipbox}
+
+% ============================================================
+% CAPÍTULO 2: VALOR Y BENEFICIOS
+% ============================================================
+\chapter{¿Por qué esta app? — Beneficios y posibilidades}
+
+\section{El problema que resuelve}
+
+Llevar una cervecería artesanal produce una montaña de datos sueltos: recetas en papeles, ingredientes anotados en una libretita, cuentas de barriles en WhatsApp, pedidos en la memoria, temperaturas de fermentación en notas del celular. Tarde o temprano algo se pierde, algo se calcula mal y algo se olvida.
+
+Esta app \textbf{reemplaza todos esos sistemas desconectados} por uno solo, centralizado, que vive en Internet y está disponible 24/7 desde tu iPhone o PC.
+
+\section{¿Por qué no alcanza con una base de datos o un Excel?}
+
+Una planilla de Excel o una base de datos simple solo \textbf{almacenan} datos. Son pasivas: tenés que consultar, cruzar, copiar y calcular todo a mano. La app agrega \textbf{lógica cervecera}, \textbf{automatización} y una \textbf{interfaz visual} diseñada para el trabajo diario en una cervecería.
+
+\begin{center}
+\begin{tcolorbox}[colback=brown!5!white, colframe=beer!40, arc=6pt, title={Comparación: hoja de cálculo vs.\ Tebana}, fonttitle=\bfseries\small]
+\small
+\begin{tabular}{>{\bfseries}lcc}
+\toprule
+& \textbf{Excel / BD} & \textbf{Tebana} \\
+\midrule
+Cálculos de IBU, ABV, color            & Manuales, propenso a errores         & Automáticos en vivo \\
+Consistencia entre lotes               & Difícil de comparar                   & Versionado y trazabilidad \\
+Descuento de stock al cocinar          & Manual, se olvida                     & Automático con cada lote \\
+Gráficos de fermentación               & No existen                            & Curvas de temperatura y gravedad \\
+Alertas de stock bajo                  & Tenés que revisar vos                 & El Dashboard te avisa solo \\
+Control de barriles prestados          & WhatsApp/memoria                      & Registro con fechas y cliente \\
+Cálculo de costo por lote              & Estimado a ojo                        & Preciso desde precios de inventario \\
+Acceso desde el iPhone en la planta    & No                                    & Sí, instalable como app nativa \\
+Backup de todo en un solo lugar        & Archivos dispersos                    & Un solo archivo SQLite \\
+Decisiones con datos reales            & Imposible                             & Dashboard y reportes siempre al día \\
+\bottomrule
+\end{tabular}
+\end{tcolorbox}
+\end{center}
+
+\section{Los 7 beneficios concretos}
+
+\begin{enumerate}[leftmargin=*, itemsep=6pt]
+
+  \item \textbf{Ahorro de tiempo.}
+  Los cálculos de IBU, ABV, color y atenuación se hacen solos mientras diseñás la receta. No necesitás calculadora, fórmulas ni planillas aparte. En 2 minutos tenés una receta completa con todos los números validados.
+
+  \item \textbf{Reducción de errores.}
+  El descuento de inventario es automático al crear un lote. No te olvidás de restar ingredientes, no anotás mal una cantidad y nunca te quedás sin stock sin saberlo porque las alertas te avisan antes.
+
+  \item \textbf{Trazabilidad completa.}
+  Cada lote sabe de qué receta salió, con qué ingredientes (y de qué lote de proveedor), qué temperaturas tuvo en fermentación y a qué cliente se vendió. Si algo sale mal, podés rastrear exactamente dónde.
+
+  \item \textbf{Consistencia entre tandas.}
+  Al tener todas las recetas versionadas y los lotes con sus datos reales (OG, FG, temperatura), podés comparar un lote contra otro y ajustar para que cada tanda salga igual. Esto es calidad profesional.
+
+  \item \textbf{Control financiero real.}
+  Cargás el precio de cada ingrediente en inventario, la app calcula el costo por litro de cada receta, y cada pedido de venta registra el ingreso. Sabés exactamente cuánto te cuesta producir cada cerveza y cuánto ganás.
+
+  \item \textbf{Profesionalización de tu operación.}
+  Pasás de tener datos en papeles, WhatsApp y memoria a un sistema centralizado, accesible desde cualquier dispositivo, respaldado y siempre disponible. Es la diferencia entre un hobby y un negocio serio.
+
+  \item \textbf{No perdés un barril nunca más.}
+  Con 14 barriles en circulación, es fácil perder la cuenta de quién tiene qué. La app te muestra de un vistazo cuántos barriles están prestados, a quién y desde cuándo. Recuperás el control total de tus activos.
+
+\end{enumerate}
+
+\section{Posibilidades a futuro}
+
+La app está diseñada para crecer con tu cervecería:
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+  \item \textbf{Integración con sensores IoT}: conectar sondas de temperatura (Raspberry Pi, ESP32) para que los registros de fermentación se carguen solos, sin intervención manual.
+  \item \textbf{Exportación BeerXML}: compartir recetas con BrewersFriend, Brewfather y otras plataformas del ecosistema cervecero.
+  \item \textbf{Multiusuario con roles}: que el maestro cervecero, el ayudante y el vendedor tengan cada uno su acceso con permisos distintos.
+  \item \textbf{Catálogo web público}: mostrar tus cervezas con ficha técnica en una página propia para clientes y redes sociales.
+  \item \textbf{Etiquetas automáticas}: generar etiquetas para botellas con los datos del lote y el logo de Tebana.
+  \item \textbf{App nativa}: versión descargable desde App Store y Google Play.
+\end{itemize}
+
+\section{Lo que tenés hoy}
+
+Con la versión actual ya podés:
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+  \item Diseñar recetas con cálculos automáticos en vivo
+  \item Gestionar inventario con alertas de stock mínimo
+  \item Seguir cada lote con gráficos de fermentación
+  \item Registrar ventas y controlar cobranzas
+  \item Manejar tu cartera de clientes
+  \item Controlar tus 14 barriles (quién los tiene, desde cuándo)
+  \item Ver todo resumido en un Dashboard
+  \item Usar la app desde tu iPhone como si fuera nativa
+  \item Hacer backups y dormir tranquilo
+\end{itemize}
+
+\begin{center}
+\color{beer}\textbf{Todo esto, gratis, 24/7, sin instalar nada.}
+\end{center}
+
+% ============================================================
+% CAPÍTULO 3: DASHBOARD
+% ============================================================
+\chapter{El Dashboard — Pantalla principal}
+
+Lo primero que ves al entrar. Te da un resumen instantáneo del estado de tu cervecería.
+
+\section{Tarjetas de estadísticas}
+
+\begin{center}
+\begin{tabular}{>{\bfseries}ll}
+\toprule
+\faBeer\ Recetas   & Cuántas recetas de cerveza tenés guardadas \\
+\faBox\ Lotes totales & Cuántas tandas de cocción registraste \\
+\faPlay\ Activos      & Cuántas tandas están en proceso ahora \\
+\faCheck\ Listos      & Cuántas tandas terminadas y listas para envasar \\
+\faMoneyBill\ Pedidos pend. & Cuántos pedidos de clientes faltan entregar/cobrar \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Alertas y notificaciones}
+
+El Dashboard tiene dos tipos de alertas:
+
+\begin{itemize}
+  \item \textbf{Recuadro rojo — Stock bajo mínimo}: aparece cuando algún ingrediente está por debajo del mínimo configurado. Muestra el nombre, cuánto queda y cuál es el mínimo. Ejemplo: \texttt{Lúpulo Cascade: 80 g / mín 200 g}.
+  \item \textbf{Recuadro amarillo — Barriles prestados}: muestra cuántos kegs están en casa de clientes y con quién.
+\end{itemize}
+
+\section{Lotes recientes}
+
+Muestra los últimos 5 lotes creados. Cada uno con nombre (tocable para ver detalle), receta base, estado con etiqueta de color y fecha de inicio.
+
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+\colorbox{yellow!30}{Planificado/Cocción} & Amarillo \\
+\colorbox{blue!20}{Fermentando} & Azul \\
+\colorbox{green!20}{Listo/Envasado} & Verde \\
+\colorbox{gray!20}{Vendido} & Gris \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Botones rápidos}
+
+Cuatro botones de acceso directo:
+\appbtn{+ Nueva Receta},
+\appbtnsec{+ Nuevo Lote},
+\appbtnsec{+ Nueva Venta},
+\appbtnsec{+ Ingrediente}.
+
+% ============================================================
+% CAPÍTULO 3: RECETAS
+% ============================================================
+\chapter{Recetas — Crear, calcular y guardar}
+
+El corazón cervecero de la app. Diseñás tus recetas y la app calcula automáticamente IBU, ABV, color y atenuación.
+
+\section{Datos generales de la receta}
+
+\begin{center}
+\begin{tabular}{>{\ttfamily}lll}
+\toprule
+\rmfamily\bfseries Campo & \rmfamily\bfseries Descripción & \rmfamily\bfseries Ejemplo \\
+\midrule
+Nombre        & Cómo se llama esta cerveza        & ``Golden Ale Tebana'' \\
+Estilo        & Estilo BJCP                       & ``American IPA'', ``Kolsch'' \\
+Vol. objetivo & Litros a producir                 & 20  \\
+Eficiencia    & Eficiencia del macerado (\%)      & 70 \\
+OG objetivo   & Densidad inicial esperada         & 1.050 \\
+FG objetivo   & Densidad final esperada           & 1.012 \\
+Notas         & Información adicional libre       & ``Ajustar lúpulo de aroma'' \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Agregar ingredientes}
+
+Cada ingrediente se agrega con el botón \appbtnsec{+ Agregar ingrediente}. Cada fila tiene:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Tipo}: \texttt{malta}, \texttt{lupulo}, \texttt{levadura} o \texttt{adjunto}.
+  \item \textbf{Ingrediente}: se elige del menú desplegable. Solo aparecen los que tenés cargados en el Inventario.
+  \item \textbf{Cantidad y Unidad}: cuánto lleva, en kg, g, lb, oz o L.
+  \item \textbf{Campos extra para lúpulos} (solo aparecen si elegís tipo ``lúpulo''):
+  \begin{itemize}
+    \item \textbf{Tiempo (min)}: minutos de hervor. 60 = principio (amargor), 15 = mitad (sabor), 5 = final (aroma), 0 = dry hop.
+    \item \textbf{Uso}: \texttt{amargor}, \texttt{sabor}, \texttt{aroma} o \texttt{dry-hop}.
+  \end{itemize}
+\end{enumerate}
+
+\section{Cálculos en vivo}
+
+A medida que agregás ingredientes, los 4 recuadros inferiores se actualizan instantáneamente:
+
+\begin{center}
+\begin{tabular}{>{\bfseries}lll}
+\toprule
+\rmfamily\bfseries Cálculo & \rmfamily\bfseries Significado & \rmfamily\bfseries Valores típicos \\
+\midrule
+ABV   & Alcohol por volumen                      & 4--5\% session, 5--7\% normal, 7--10\% fuerte \\
+IBU   & Unidades de amargor (fórmula Tinseth)    & 10--20 suave, 20--40 media, 40--60 amarga \\
+SRM   & Color (escala Morey)                     & 2--5 dorada, 5--15 ámbar, 15--25 marrón, 25+ negra \\
+At.   & Atenuación (\%)                           & 70--80\% típico para ales \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tipbox}
+Jugá con las cantidades y mirá cómo cambian los números en vivo. Es la mejor forma de diseñar una receta balanceada.
+\end{tipbox}
+
+\section{Ver y editar recetas}
+
+Al ver una receta aparecen tarjetas con todos los datos calculados, tabla de ingredientes con \% de grilla (solo maltas), IBU por lúpulo y SRM por malta, y botones para editar o eliminar.
+
+\begin{warnbox}
+El cálculo de IBU requiere que los lúpulos tengan cargado el \% de alfa-ácido en el Inventario. El cálculo de SRM requiere que las maltas tengan cargado el valor Lovibond.
+\end{warnbox}
+
+% ============================================================
+% CAPÍTULO 4: INVENTARIO
+% ============================================================
+\chapter{Inventario — Control de ingredientes}
+
+Acá manejás el stock de maltas, lúpulos, levaduras y otros insumos.
+
+\section{Pantalla de lista y filtros}
+
+Filtros tipo píldora arriba: \texttt{Todos}, \texttt{Malta}, \texttt{Lúpulo}, \texttt{Levadura}, \texttt{Adjunto} y \texttt{Stock bajo} (roja).
+
+\section{Ajuste rápido de stock}
+
+Cada ingrediente tiene botones \appbtnsec{+} y \appbtnsec{--} inline. Ponés el número y tocás; suma o resta del stock instantáneamente, sin entrar a editar todo el ingrediente.
+
+\begin{tipbox}
+Ideal para ajustar stock al vuelo: ``Gasté 500 g de malta en la cocción, pongo 0.5 en el -- y listo''.
+\end{tipbox}
+
+\section{Agregar un ingrediente nuevo}
+
+\begin{center}
+\begin{tabular}{>{\ttfamily}lll}
+\toprule
+\rmfamily\bfseries Campo & \rmfamily\bfseries Para qué & \rmfamily\bfseries Ejemplo \\
+\midrule
+Nombre      & Identificación                     & ``Malta Pilsner'', ``Lúpulo Cascade'' \\
+Tipo        & Categoría                          & malta / lúpulo / levadura / adjunto \\
+Cantidad inicial & Stock con el que empezás      & 25 \\
+Unidad      & En qué medís                      & kg, g, lb, oz, L, unidad \\
+Stock mínimo & Con cuánto querés que te avise    & 10 \\
+Precio      & Cuánto pagaste                    & 2500 (pesos) \\
+Lote/prov.  & Trazabilidad                      & ``Lote \#456'' \\
+Caducidad   & Fecha de vencimiento              & Selector de fecha \\
+Notas       & Libre                             & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Campos cerveceros especiales}
+
+Al elegir \textbf{lúpulo}, aparece:
+
+\begin{itemize}
+  \item \textbf{\% Alfa-ácido}: porcentaje de alfa-ácidos del lúpulo. Viene en el paquete. \textbf{Crítico para calcular IBU en recetas.}
+\end{itemize}
+
+Al elegir \textbf{malta}, aparece:
+
+\begin{itemize}
+  \item \textbf{Lovibond (color)}: color de la malta en grados Lovibond. \textbf{Crítico para calcular SRM en recetas.} Ej: Pilsner 1.5L, Munich 10L, Chocolate 350L.
+\end{itemize}
+
+% ============================================================
+% CAPÍTULO 5: LOTES
+% ============================================================
+\chapter{Lotes — Seguimiento de producción}
+
+Cada tanda de cocción genera un lote. El lote sigue todo el proceso de vida de esa cerveza.
+
+\section{Estados del proceso}
+
+Siete estados que representan el ciclo completo de una cerveza:
+
+\begin{center}
+\begin{tcolorbox}[colback=yellow!5!white, colframe=beer!30, arc=6pt]
+\sffamily\small
+\textbf{Planificado} \,\faArrowRight\,
+\textbf{Cocción} \,\faArrowRight\,
+\textbf{Fermentando} \,\faArrowRight\,
+\textbf{Madurando} \,\faArrowRight\,
+\textbf{Listo} \,\faArrowRight\,
+\textbf{Envasado} \,\faArrowRight\,
+\textbf{Vendido}
+\end{tcolorbox}
+\end{center}
+
+Cada estado se selecciona desde un menú desplegable dentro del lote. El color de la etiqueta cambia según el estado: amarillo para planificado/cocción, azul para fermentando, verde para listo/envasado, gris para vendido.
+
+\section{Crear un lote}
+
+Campos: \appfield{Nombre del lote} (ej: ``Golden Ale \#4''), \appfield{Receta base} (menú desplegable), \appfield{Volumen objetivo (L)}, \appfield{Notas}.
+
+\begin{warnbox}
+Al crear un lote vinculado a una receta, el stock de ingredientes se \textbf{descuenta automáticamente}. No tenés que hacerlo a mano.
+\end{warnbox}
+
+\section{Seguimiento de fermentación}
+
+Pantalla más importante del sistema. Dentro de cada lote:
+
+\begin{itemize}
+  \item \textbf{Botón \appbtn{+ Registrar}}: abrís un formulario para anotar temperatura (°C), gravedad y notas.
+  \item \textbf{Gráfico de fermentación}: dos curvas superpuestas — gravedad (ámbar) y temperatura (naranja) — con ejes Y independientes.
+  \item \textbf{Tabla de registros}: historial completo de todas las mediciones.
+\end{itemize}
+
+\begin{tipbox}
+Registrá la gravedad todos los días durante la fermentación activa (primeros 5--7 días). Después cada 2--3 días. La gráfica te muestra si la fermentación va bien o se estancó.
+\end{tipbox}
+
+% ============================================================
+% CAPÍTULO 6: VENTAS, CLIENTES Y BARRILES
+% ============================================================
+\chapter{Ventas, Clientes y Barriles}
+
+\section{Ventas — Pedidos}
+
+Cada venta se registra como un \textbf{pedido}:
+
+\begin{enumerate}[leftmargin=*]
+  \item Elegí el \textbf{cliente} del menú.
+  \item Agregá \textbf{productos} con \appbtnsec{+ Agregar producto}: nombre, cantidad y precio unitario.
+  \item El \textbf{total} se calcula automáticamente.
+  \item Cambiá el estado según avance: Pendiente $\to$ Entregado $\to$ Pagado.
+\end{enumerate}
+
+\section{Clientes}
+
+CRUD simple: \appfield{Nombre}, \appfield{Contacto}, \appfield{Tipo} (bar, restaurante, retail, particular), \appfield{Dirección}, \appfield{Notas}.
+
+\section{Barriles — Control de kegs}
+
+Para tus 14 barriles:
+
+\begin{itemize}
+  \item Cada barril tiene nombre, capacidad (L), contenido actual y ubicación.
+  \item \textbf{Prestar}: seleccionás cliente del menú, tocás \appbtn{Prestar}. El barril queda marcado en amarillo.
+  \item \textbf{Devolver}: cuando el barril vuelve, tocás \appbtn{Devolver} y vuelve a ``En casa''.
+  \item El Dashboard muestra cuántos barriles están prestados y a quién.
+\end{itemize}
+
+\begin{tipbox}
+Los barriles con fondo amarillo están prestados. No te olvides de devolverlos cuando vuelvan.
+\end{tipbox}
+
+% ============================================================
+% CAPÍTULO 7: SIMULACIÓN INTERACTIVA
+% ============================================================
+\chapter{Simulación interactiva: Golden Ale Tebana}
+
+Esta sección te guía paso a paso por un caso real completo. Vas a crear desde cero una cerveza estilo \textbf{Golden Ale}, usando \textbf{todos los módulos} de la app. Seguí cada paso en tu app real mientras leés.
+
+{\large\color{accent}\textbf{Objetivo:}} producir 20 litros de Golden Ale (ABV $\approx$ 4.8\%, IBU $\approx$ 25, color dorado $\approx$ 5 SRM), vender 2 barriles a un bar y controlar los kegs.
+
+\vspace{8pt}
+
+% ---- FASE 1 ----
+\section{Fase 1 — Cargar ingredientes en Inventario}
+
+Antes de crear la receta, necesitás tener los ingredientes en el sistema. Andá a \textbf{Inventario} $\to$ \appbtn{+ Ingrediente}.
+
+\begin{simbox}
+\textbf{Simulación: cargá uno por uno estos 5 ingredientes.}
+
+\medskip
+\begin{tabular}{llllll}
+\toprule
+\textbf{Nombre} & \textbf{Tipo} & \textbf{Cant.} & \textbf{Unidad} & \textbf{Mín.} & \textbf{Dato extra} \\
+\midrule
+Malta Pilsner    & malta    & 25 & kg & 10 & Lovibond = 1.5 \\
+Malta Munich     & malta    & 5  & kg & 2  & Lovibond = 10 \\
+Lúpulo Cascade   & lúpulo   & 500 & g & 100 & Alfa = 5.5\% \\
+Lúpulo Citra     & lúpulo   & 200 & g & 50  & Alfa = 12\% \\
+Levadura US-05   & levadura & 5   & und & 2  & -- \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textcolor{accent}{\faArrowRight\ Al terminar, volvé al Dashboard. Deberías ver: Recetas = 0, Lotes = 0, sin alertas de stock.}
+\end{simbox}
+
+% ---- FASE 2 ----
+\section{Fase 2 — Crear la receta}
+
+Andá a \textbf{Recetas} $\to$ \appbtn{+ Nueva Receta}.
+
+\begin{simbox}
+\textbf{Simulación: completá los datos generales.}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{Campo} & \textbf{Valor} \\
+\midrule
+Nombre             & ``Golden Ale Tebana'' \\
+Estilo             & ``Blonde Ale'' \\
+Vol. objetivo (L)  & 20 \\
+Eficiencia (\%)    & 70 \\
+OG objetivo        & 1.048 \\
+FG objetivo        & 1.010 \\
+Notas              & ``Primera Golden Ale. Buscar balance maltoso con final limpio.'' \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textbf{Ahora agregá los ingredientes} (tocá \appbtnsec{+ Agregar ingrediente} por cada uno):
+
+\begin{enumerate}[leftmargin=*]
+  \item Tipo \texttt{malta}, elegí \texttt{Malta Pilsner}, cantidad \texttt{4}, unidad \texttt{kg}.
+  \item Tipo \texttt{malta}, elegí \texttt{Malta Munich}, cantidad \texttt{0.5}, unidad \texttt{kg}.
+  \item \textbf{(Lúpulo de amargor)} Tipo \texttt{lúpulo}, elegí \texttt{Lúpulo Cascade}, cantidad \texttt{20}, unidad \texttt{g}, tiempo \texttt{60}, uso \texttt{amargor}.
+  \item \textbf{(Lúpulo de aroma)} Tipo \texttt{lúpulo}, elegí \texttt{Lúpulo Citra}, cantidad \texttt{15}, unidad \texttt{g}, tiempo \texttt{5}, uso \texttt{aroma}.
+  \item Tipo \texttt{levadura}, elegí \texttt{Levadura US-05}, cantidad \texttt{1}, unidad \texttt{unidad}.
+\end{enumerate}
+
+\medskip
+\textcolor{accent}{\faEye\ Mirá los cálculos en vivo mientras agregás:}
+\begin{itemize}
+  \item ABV: $\approx$ \textbf{5.0\%}
+  \item IBU: $\approx$ \textbf{25}
+  \item Color: $\approx$ \textbf{5 SRM} (dorado)
+  \item Atenuación: $\approx$ \textbf{79\%}
+\end{itemize}
+
+\medskip
+\textcolor{accent}{\faArrowRight\ Tocá \appbtn{Guardar Receta}.}
+\end{simbox}
+
+% ---- FASE 3 ----
+\section{Fase 3 — Crear el lote de producción}
+
+Andá a \textbf{Lotes} $\to$ \appbtn{+ Nuevo Lote}.
+
+\begin{simbox}
+\textbf{Simulación: creá el lote \#1.}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{Campo} & \textbf{Valor} \\
+\midrule
+Nombre del lote   & ``Golden Ale -- Lote \#1'' \\
+Receta base       & Elegí ``Golden Ale Tebana'' del menú \\
+Vol. objetivo (L) & 20 \\
+Notas             & ``Día de cocción: macerado a 65°C por 60 min, hervor 60 min'' \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textcolor{accent}{\faExclamationTriangle\ Al guardar, el stock se descuenta automáticamente:}
+\begin{itemize}
+  \item Malta Pilsner: 25 kg $\to$ 21 kg
+  \item Malta Munich: 5 kg $\to$ 4.5 kg
+  \item Lúpulo Cascade: 500 g $\to$ 480 g
+  \item Lúpulo Citra: 200 g $\to$ 185 g
+  \item Levadura US-05: 5 und $\to$ 4 und
+\end{itemize}
+
+\medskip
+\textcolor{accent}{\faArrowRight\ Tocá \appbtn{Crear Lote}. Verificá en Inventario que el stock bajó.}
+\end{simbox}
+
+% ---- FASE 4 ----
+\section{Fase 4 — Registrar la fermentación (día a día)}
+
+Entrá al lote que creaste (tocalo en la lista de Lotes). Vas a simular 7 días de fermentación.
+
+\begin{simbox}
+\textbf{Simulación: registrá estas mediciones.} Tocá \appbtn{+ Registrar} para cada una.
+
+\medskip
+\begin{tabular}{clll}
+\toprule
+\textbf{Día} & \textbf{Fecha} & \textbf{Temp (°C)} & \textbf{Gravedad} \\
+\midrule
+Día 0 (cocción)  & 15/07  & 20.0  & 1.048 \\
+Día 1            & 16/07  & 19.5  & 1.042 \\
+Día 2            & 17/07  & 20.0  & 1.030 \\
+Día 3            & 18/07  & 19.8  & 1.020 \\
+Día 4            & 19/07  & 20.2  & 1.014 \\
+Día 5            & 20/07  & 20.0  & 1.011 \\
+Día 6            & 21/07  & 20.0  & 1.010 \\
+Día 7            & 22/07  & 19.0  & 1.010 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\textcolor{accent}{\faEye\ Observá la gráfica:} la línea ámbar (gravedad) baja rápido los primeros 3--4 días y se estabiliza. La línea naranja (temperatura) se mantiene estable alrededor de 20°C.
+
+\medskip
+\textcolor{accent}{\faArrowRight\ La gravedad se estabilizó en 1.010 por 2 días seguidos. La fermentación terminó.}
+\end{simbox}
+
+\subsection{Cambiar el estado del lote}
+
+El lote empieza en \texttt{planificado}. A medida que avanza el proceso real, actualizalo:
+
+\begin{enumerate}[leftmargin=*]
+  \item Día de cocción: cambiá a \texttt{cocción}.
+  \item Después de inocular levadura: cambiá a \texttt{fermentando}.
+  \item Cuando la gravedad se estabiliza: cambiá a \texttt{madurando}.
+  \item Después del cold crash: cambiá a \texttt{listo}.
+  \item Al envasar en barriles: cambiá a \texttt{envasado}.
+\end{enumerate}
+
+\begin{simbox}
+\textbf{Simulación:} en el lote, usá el menú desplegable de estado y cambialo a \texttt{listo}. Tocá \appbtn{Actualizar}.
+\end{simbox}
+
+% ---- FASE 5 ----
+\section{Fase 5 — Crear un cliente}
+
+Andá a \textbf{Clientes} $\to$ \appbtn{+ Nuevo}.
+
+\begin{simbox}
+\textbf{Simulación: creá este cliente.}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{Campo} & \textbf{Valor} \\
+\midrule
+Nombre    & ``Bar El Growler'' \\
+Contacto  & ``Juan Pérez -- 11 4567 8901'' \\
+Tipo      & bar \\
+Dirección & ``Av. Corrientes 1234'' \\
+Notas     & ``Pide Golden Ale cada 15 días. Devuelve kegs puntual.'' \\
+\bottomrule
+\end{tabular}
+\end{simbox}
+
+% ---- FASE 6 ----
+\section{Fase 6 — Registrar la venta}
+
+Andá a \textbf{Ventas} $\to$ \appbtn{+ Nuevo Pedido}.
+
+\begin{simbox}
+\textbf{Simulación: creá el pedido.}
+
+\begin{enumerate}[leftmargin=*]
+  \item Cliente: elegí \texttt{Bar El Growler}.
+  \item Tocá \appbtnsec{+ Agregar producto} dos veces:
+  \begin{itemize}
+    \item Producto \texttt{Golden Ale}, Cantidad \texttt{2}, Precio \texttt{15000}.
+    \item Producto \texttt{Golden Ale -- Growler 2L}, Cantidad \texttt{5}, Precio \texttt{3000}.
+  \end{itemize}
+  \item Total automático: \$45.000.
+  \item Notas: ``Entregar viernes 25/07. Lleva 2 barriles de 20L + 5 growlers. Traer kegs vacíos de la entrega anterior.''
+\end{enumerate}
+
+\medskip
+\textcolor{accent}{\faArrowRight\ Tocá \appbtn{Crear Pedido}.}
+\end{simbox}
+
+\subsection{Cambiar estado del pedido}
+
+Cuando entregues la cerveza, entrá al pedido y cambia el estado a \texttt{Entregado}. Cuando cobres, cambialo a \texttt{Pagado}.
+
+\begin{simbox}
+\textbf{Simulación:} entrá al pedido, cambiá el estado a \texttt{Entregado}, tocá \appbtn{OK}. Después cambialo a \texttt{Pagado}.
+\end{simbox}
+
+% ---- FASE 7 ----
+\section{Fase 7 — Controlar los barriles}
+
+Andá a \textbf{Barriles}. Si no tenés ninguno cargado, creá dos con \appbtn{+ Nuevo}.
+
+\begin{simbox}
+\textbf{Simulación: creá dos barriles.}
+
+\begin{tabular}{llll}
+\toprule
+\textbf{Nombre} & \textbf{Capacidad (L)} & \textbf{Contenido} & \textbf{Ubicación} \\
+\midrule
+Keg \#1 & 20 & Golden Ale & Cámara fría \\
+Keg \#2 & 20 & Golden Ale & Cámara fría \\
+\bottomrule
+\end{tabular}
+
+\medskip
+Ahora \textbf{prestá los barriles} (simulando la entrega al bar):
+\begin{itemize}
+  \item En Keg \#1, seleccioná \texttt{Bar El Growler} del menú y tocá \appbtn{Prestar}.
+  \item En Keg \#2, seleccioná \texttt{Bar El Growler} del menú y tocá \appbtn{Prestar}.
+\end{itemize}
+
+\medskip
+\textcolor{accent}{\faArrowRight\ Volvé al Dashboard. Deberías ver ``Barriles prestados: 2'' con el nombre del bar.}
+
+\medskip
+\textbf{Una semana después, cuando devuelven los kegs vacíos:}
+\begin{itemize}
+  \item Entrá a Barriles, en cada keg tocá \appbtn{Devolver}.
+  \item Cambiá el contenido a vacío (``--'').
+  \item El Dashboard vuelve a mostrar ``Todos los barriles en casa''.
+\end{itemize}
+\end{simbox}
+
+% ---- CIERRE SIMULACIÓN ----
+\section{Resultado final de la simulación}
+
+Al terminar los 7 pasos, tu app debería mostrar:
+
+\begin{center}
+\begin{tabular}{>{\bfseries}ll}
+\toprule
+Dashboard: & 1 receta, 1 lote (listo), 1 pedido (pagado), 2 barriles en casa \\
+Recetas:   & ``Golden Ale Tebana'' con ABV 5.0\%, IBU 25, 5 SRM \\
+Inventario:& Stock actualizado con los descuentos \\
+Lotes:     & ``Golden Ale -- Lote \#1'' con gráfica de fermentación completa \\
+Ventas:    & Pedido \#1 a Bar El Growler por \$45.000 (pagado) \\
+Clientes:  & Bar El Growler \\
+Barriles:  & Keg \#1 y \#2 de vuelta en casa \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tipbox}
+\textbf{Repetí esta simulación} cada vez que hagas un lote nuevo en la vida real. Los datos se acumulan y en pocas semanas tenés un historial completo de tu producción.
+\end{tipbox}
+
+% ============================================================
+% CAPÍTULO 8: BACKUP
+% ============================================================
+\chapter{Backup de datos}
+
+Tus recetas, inventario, lotes y ventas están en un solo archivo. Hacé copias de seguridad periódicas.
+
+\section{Hacer un backup}
+
+\begin{enumerate}[leftmargin=*]
+  \item En PythonAnywhere, abrí una consola Bash (pestaña Consoles).
+  \item Ejecutá:
+\end{enumerate}
+
+\begin{lstlisting}[language=bash, basicstyle=\small\ttfamily, frame=single, backgroundcolor=\color{black!3}]
+cp ~/InventarioTebana/data/cerveceria.db ~/backup_$(date +%Y%m%d).db
+\end{lstlisting}
+
+El archivo \texttt{backup\_20260715.db} queda guardado en tu home.
+
+\section{Restaurar desde backup}
+
+\begin{lstlisting}[language=bash, basicstyle=\small\ttfamily, frame=single, backgroundcolor=\color{black!3}]
+cp ~/backup_20260715.db ~/InventarioTebana/data/cerveceria.db
+\end{lstlisting}
+
+\begin{tipbox}
+Frecuencia recomendada: una vez por semana. También antes de hacer muchos cambios juntos.
+\end{tipbox}
+
+% ============================================================
+% CAPÍTULO 9: PREGUNTAS FRECUENTES
+% ============================================================
+\chapter{Preguntas frecuentes}
+
+\begin{enumerate}[leftmargin=*, itemsep=8pt]
+
+\item \textbf{¿La app no carga, dice ``Coming Soon''?}
+Falta crear la web app en PythonAnywhere. Andá a Web $\to$ Add a new web app $\to$ Manual config $\to$ Python 3.10.
+
+\item \textbf{¿No me aparecen ingredientes para elegir en las recetas?}
+Primero tenés que cargar los ingredientes en \textbf{Inventario}. El menú de recetas solo muestra lo que existe en el inventario.
+
+\item \textbf{¿Los cálculos de IBU y color no funcionan?}
+Los lúpulos necesitan tener cargado el \textbf{\% de alfa-ácido}. Las maltas necesitan \textbf{Lovibond}. Editalos en Inventario y completá esos campos.
+
+\item \textbf{¿Cómo calculo la eficiencia de mi equipo?}
+Empezá con 70\%. Si tu OG real siempre sale más alto, subila. Si sale más bajo, bajala. Con el tiempo le agarás la mano.
+
+\item \textbf{¿Se puede usar sin internet?}
+En iPhone, si la instalaste como PWA, algunas pantallas quedan en caché. Pero para guardar datos nuevos necesitás internet (los datos se guardan en el servidor).
+
+\item \textbf{¿Puedo agregar más de un usuario?}
+Por ahora es monousuario. En el futuro se puede agregar control de acceso con roles.
+
+\item \textbf{¿Se pueden exportar recetas a BeerXML?}
+No todavía, pero está planeado para una versión futura.
+
+\end{enumerate}
+
+% ============================================================
+% CAPÍTULO 10: GLOSARIO
+% ============================================================
+\chapter{Glosario cervecero}
+
+\begin{center}
+\begin{tabular}{>{\bfseries}lp{9cm}}
+\toprule
+Término & Significado \\
+\midrule
+OG (Original Gravity) & Densidad del mosto antes de fermentar. Ej: 1.050 \\
+FG (Final Gravity) & Densidad después de fermentar. Ej: 1.012 \\
+ABV (Alcohol By Volume) & Porcentaje de alcohol: (OG $-$ FG) $\times$ 131.25 \\
+IBU & Unidades de amargor. Aportado por lúpulos en hervor \\
+SRM (Standard Reference Method) & Escala de color: 2 = clara, 40+ = negra \\
+Eficiencia & \% de azúcares extraídos del grano en el macerado \\
+Atenuación & \% de azúcares que fermentó la levadura \\
+Lovibond (L) & Unidad de color de maltas. Pilsner $\approx$ 1.5L, Munich $\approx$ 10L, Chocolate $\approx$ 350L \\
+Alfa-ácidos & Compuestos del lúpulo que aportan amargor (\%) \\
+Macerado / Mash & Remojo de granos molidos en agua caliente para extraer azúcares \\
+Hervor / Boil & Cocción del mosto con lúpulos (60--90 min) \\
+Dry Hop & Lúpulo agregado en frío, post-fermentación, solo aroma \\
+Krausen & Espuma densa sobre el mosto en fermentación activa \\
+Trub & Sedimento de proteínas y lúpulo post-hervor \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vfill
+\begin{center}
+{\large\color{beer}\faBeer\ \textbf{Tebana Laboratorio Cervecero}\ \faBeer}
+
+\medskip
+{\small\color{black!50}github.com/BlueSatellite/InventarioTebana}
+
+\smallskip
+{\small\color{black!50}Julio 2026}
+\end{center}
+
+\end{document}

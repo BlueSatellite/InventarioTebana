@@ -94,10 +94,12 @@ class Barril(db.Model):
     capacidad_l = db.Column(db.Float, default=20)
     contenido_actual = db.Column(db.String(100))
     ubicacion = db.Column(db.String(100))
+    estado = db.Column(db.String(20), default='disponible')  # disponible, sucio, prestado
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
     fecha_prestamo = db.Column(db.Date)
+    fecha_devolucion = db.Column(db.Date)
 
-    cliente = db.relationship('Cliente')
+    cliente = db.relationship('Cliente', foreign_keys=[cliente_id])
 
 
 class Cliente(db.Model):

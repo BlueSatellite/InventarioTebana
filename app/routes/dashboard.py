@@ -16,7 +16,7 @@ def index():
         Ingrediente.cantidad <= Ingrediente.stock_minimo
     ).all()
 
-    barriles_prestados = Barril.query.filter(Barril.cliente_id != None).all()
+    barriles_prestados = Barril.query.filter_by(estado='prestado').all()
 
     lotes_recientes = Lote.query.order_by(Lote.created_at.desc()).limit(5).all()
     pedidos_pendientes = Pedido.query.filter_by(estado='pendiente').count()
