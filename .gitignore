@@ -1,5 +1,9 @@
 __pycache__/
 *.pyc
 *.db
+*.aux
+*.log
+*.out
+*.toc
 data/
 .env
