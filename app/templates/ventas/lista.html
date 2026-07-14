@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Ventas - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Ventas / Pedidos</h1>
+    <a href="{{ url_for('ventas.nuevo') }}" class="bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nuevo Pedido</a>
+</div>
+
+{% if pedidos %}
+<div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500">
+            <tr>
+                <th class="text-left px-4 py-3">Cliente</th>
+                <th class="text-left px-4 py-3">Fecha</th>
+                <th class="text-left px-4 py-3">Estado</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="px-4 py-3">
+                    <a href="{{ url_for('ventas.ver', id=pedido.id) }}" class="text-blue-600 font-medium">
+                        {{ pedido.cliente.nombre if pedido.cliente else 'Sin cliente' }}
+                    </a>
+                </td>
+                <td class="px-4 py-3 text-gray-600">{{ pedido.fecha.strftime('%d/%m/%Y') if pedido.fecha else '-' }}</td>
+                <td class="px-4 py-3">
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                        {% if pedido.estado == 'pagado' %}bg-green-100 text-green-700
+                        {% elif pedido.estado == 'entregado' %}bg-blue-100 text-blue-700
+                        {% elif pedido.estado == 'cancelado' %}bg-red-100 text-red-700
+                        {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                        {{ pedido.estado }}
+                    </span>
+                </td>
+                <td class="px-4 py-3 hidden md:table-cell font-medium">${{ "%.2f"|format(pedido.total) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+    <p class="text-4xl mb-3">&#x1F4B0;</p>
+    <p>No hay pedidos todavia.</p>
+    <a href="{{ url_for('ventas.nuevo') }}" class="inline-block mt-4 bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nuevo Pedido</a>
+</div>
+{% endif %}
+
+{% endblock %}

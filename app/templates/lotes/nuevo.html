@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Lote - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center mb-4">
+    <a href="{{ url_for('lotes.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Nuevo Lote</h1>
+</div>
+
+<form method="POST" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-2xl">
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Nombre del lote *</label>
+        <input type="text" name="nombre" required placeholder="Ej: IPA Lote #3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Receta base</label>
+        <select name="receta_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none bg-white">
+            <option value="">Sin receta asociada</option>
+            {% for r in recetas %}
+            <option value="{{ r.id }}">{{ r.nombre }} ({{ r.estilo or 'Sin estilo' }})</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Volumen objetivo (L)</label>
+        <input type="number" name="volumen_objetivo_l" value="20" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+        <textarea name="notas" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none"></textarea>
+    </div>
+    <p class="text-xs text-gray-400">&#x26A0; Al crear el lote, se descontara automaticamente el stock de los ingredientes de la receta asociada.</p>
+
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Crear Lote</button>
+        <a href="{{ url_for('lotes.lista') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+    </div>
+</form>
+
+{% endblock %}

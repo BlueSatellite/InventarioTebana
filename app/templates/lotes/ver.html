@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}{{ lote.nombre }} - Lote{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+        <a href="{{ url_for('lotes.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+        <h1 class="text-2xl font-bold text-gray-800">{{ lote.nombre }}</h1>
+    </div>
+</div>
+
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-xl shadow p-4">
+        <div class="text-xs text-gray-500">Estado</div>
+        <form method="POST" action="{{ url_for('lotes.actualizar_estado', id=lote.id) }}" class="flex gap-2 mt-1">
+            <select name="estado" class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                {% for e in estados %}
+                <option value="{{ e }}" {{ 'selected' if lote.estado == e }}>{{ e|capitalize }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition">Actualizar</button>
+        </form>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+        <div class="text-xs text-gray-500">Receta base</div>
+        <div class="font-medium text-gray-800 mt-1">
+            {% if lote.receta %}
+            <a href="{{ url_for('recetas.ver', id=lote.receta.id) }}" class="text-blue-600">{{ lote.receta.nombre }}</a>
+            {% else %}-{% endif %}
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+        <div class="text-xs text-gray-500">Volumen</div>
+        <div class="font-medium text-gray-800 mt-1">{{ "%.0f"|format(lote.volumen_objetivo_l) if lote.volumen_objetivo_l else '-' }} L</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+        <div class="text-xs text-gray-500">Inicio</div>
+        <div class="font-medium text-gray-800 mt-1">{{ lote.fecha_inicio.strftime('%d/%m/%Y') if lote.fecha_inicio else '-' }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+        <div class="text-xs text-gray-500">OG real</div>
+        <div class="font-medium text-gray-800 mt-1">{{ "%.3f"|format(lote.og_real) if lote.og_real else '-' }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 text-center">
+        <div class="text-xs text-gray-500">FG real</div>
+        <div class="font-medium text-gray-800 mt-1">{{ "%.3f"|format(lote.fg_real) if lote.fg_real else '-' }}</div>
+    </div>
+</div>
+
+{% if lote.notas %}
+<div class="bg-white rounded-xl shadow p-4 mb-6">
+    <h2 class="font-bold text-gray-700 mb-2">Notas</h2>
+    <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ lote.notas }}</p>
+</div>
+{% endif %}
+
+<div class="bg-white rounded-xl shadow p-4 mb-6">
+    <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold text-gray-700">Registro de fermentacion</h2>
+        <button onclick="document.getElementById('form-registro').classList.toggle('hidden')" class="bg-beer-500 hover:bg-beer-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">+ Registrar</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('lotes.agregar_registro', id=lote.id) }}" id="form-registro" class="hidden mb-4 p-4 bg-gray-50 rounded-lg">
+        <div class="grid grid-cols-3 gap-3">
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Temperatura (C)</label>
+                <input type="number" name="temperatura" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Gravedad</label>
+                <input type="number" name="gravedad" step="0.001" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Notas</label>
+                <input type="text" name="notas" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none">
+            </div>
+        </div>
+        <button type="submit" class="mt-3 bg-beer-500 hover:bg-beer-600 text-white px-4 py-1.5 rounded-lg text-xs font-medium transition">Guardar registro</button>
+    </form>
+
+    {% if registros %}
+    <div class="mb-4">
+        <canvas id="fermentacion-chart" height="200"></canvas>
+    </div>
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500">
+            <tr>
+                <th class="text-left px-3 py-2">Fecha</th>
+                <th class="text-left px-3 py-2">Temp (C)</th>
+                <th class="text-left px-3 py-2">Gravedad</th>
+                <th class="text-left px-3 py-2">Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in registros %}
+            <tr class="border-b border-gray-100">
+                <td class="px-3 py-2">{{ r.fecha.strftime('%d/%m %H:%M') }}</td>
+                <td class="px-3 py-2">{{ "%.1f"|format(r.temperatura) if r.temperatura else '-' }}</td>
+                <td class="px-3 py-2">{{ "%.3f"|format(r.gravedad) if r.gravedad else '-' }}</td>
+                <td class="px-3 py-2">{{ r.notas or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-sm text-gray-400 text-center py-4">Sin registros de fermentacion todavia.</p>
+    {% endif %}
+</div>
+
+{% if registros %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+const ctx = document.getElementById('fermentacion-chart').getContext('2d');
+const labels = [
+    {% for r in registros %}
+    '{{ r.fecha.strftime("%d/%m %H:%M") }}'{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+const temps = [
+    {% for r in registros %}
+    {{ "%.1f"|format(r.temperatura) if r.temperatura else 0 }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+const gravedades = [
+    {% for r in registros %}
+    {{ "%.3f"|format(r.gravedad) if r.gravedad else 0 }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Gravedad',
+            data: gravedades,
+            borderColor: '#eab308',
+            backgroundColor: 'rgba(234,179,8,0.1)',
+            yAxisID: 'y',
+            tension: 0.3,
+            fill: true
+        }, {
+            label: 'Temperatura (C)',
+            data: temps,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            yAxisID: 'y1',
+            tension: 0.3,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+            y: { type: 'linear', position: 'left', title: { display: true, text: 'Gravedad' } },
+            y1: { type: 'linear', position: 'right', title: { display: true, text: 'Temperatura' }, grid: { drawOnChartArea: false } }
+        }
+    }
+});
+</script>
+{% endif %}
+
+{% endblock %}

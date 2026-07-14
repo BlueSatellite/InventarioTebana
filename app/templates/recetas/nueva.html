@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block title %}Nueva Receta - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center mb-4">
+    <a href="{{ url_for('recetas.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Nueva Receta</h1>
+</div>
+
+<form method="POST" class="space-y-6" id="receta-form">
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="font-bold text-gray-700 mb-4">Datos generales</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Nombre *</label>
+                <input type="text" name="nombre" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Estilo</label>
+                <input type="text" name="estilo" placeholder="Ej: American IPA" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Volumen objetivo (L)</label>
+                <input type="number" name="volumen_objetivo_l" value="20" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none" id="volumen">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Eficiencia (%)</label>
+                <input type="number" name="eficiencia" value="70" step="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">OG objetivo</label>
+                <input type="number" name="og_objetivo" value="1.050" step="0.001" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none" id="og">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">FG objetivo</label>
+                <input type="number" name="fg_objetivo" value="1.012" step="0.001" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+        </div>
+        <div class="mt-3">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+            <textarea name="notas" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none"></textarea>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6" id="insumos-section">
+        <h2 class="font-bold text-gray-700 mb-4">Ingredientes</h2>
+        <div id="insumos-container" class="space-y-3">
+            <div class="insumo-row grid grid-cols-12 gap-2 items-end border-b border-gray-100 pb-3" data-index="0">
+                <div class="col-span-3 md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
+                    <select name="insumo_tipo[]" class="insumo-tipo w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="malta">Malta</option>
+                        <option value="lupulo">Lupulo</option>
+                        <option value="levadura">Levadura</option>
+                        <option value="adjunto">Adjunto</option>
+                    </select>
+                </div>
+                <div class="col-span-5 md:col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Ingrediente</label>
+                    <select name="insumo_ingrediente_id[]" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="">Seleccionar...</option>
+                        {% for ing in ingredientes %}
+                        <option value="{{ ing.id }}" data-tipo="{{ ing.tipo }}" data-alpha="{{ ing.alpha_acido }}" data-lovibond="{{ ing.lovibond }}">{{ ing.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Cant.</label>
+                    <input type="number" name="insumo_cantidad[]" step="0.01" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
+                </div>
+                <div class="col-span-1 md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Unidad</label>
+                    <select name="insumo_unidad[]" class="w-full border border-gray-300 rounded-lg px-1 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="lb">lb</option>
+                        <option value="oz">oz</option>
+                        <option value="L">L</option>
+                    </select>
+                </div>
+                <div class="col-span-2 md:col-span-1 lupulo-campos">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Tiempo (min)</label>
+                    <input type="number" name="insumo_tiempo[]" value="60" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
+                </div>
+                <div class="col-span-2 md:col-span-1 lupulo-campos">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Uso</label>
+                    <select name="insumo_uso[]" class="w-full border border-gray-300 rounded-lg px-1 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="amargor">Amargor</option>
+                        <option value="sabor">Sabor</option>
+                        <option value="aroma">Aroma</option>
+                        <option value="dry-hop">Dry Hop</option>
+                    </select>
+                </div>
+                <div class="col-span-1 hidden md:block">
+                    <button type="button" class="eliminar-fila text-red-400 hover:text-red-600 text-lg" title="Eliminar">&times;</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="agregar-insumo" class="mt-3 text-sm text-beer-600 hover:text-beer-700 font-medium">
+            + Agregar ingrediente
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6" id="resumen-calculos">
+        <h2 class="font-bold text-gray-700 mb-3">Calculos estimados</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-gray-500 text-xs">ABV</div>
+                <div class="text-lg font-bold text-gray-800" id="calc-abv">-</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-gray-500 text-xs">IBU</div>
+                <div class="text-lg font-bold text-gray-800" id="calc-ibu">-</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-gray-500 text-xs">Color (SRM)</div>
+                <div class="text-lg font-bold text-gray-800" id="calc-color">-</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3 text-center">
+                <div class="text-gray-500 text-xs">Atenuacion</div>
+                <div class="text-lg font-bold text-gray-800" id="calc-atten">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex gap-3">
+        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Guardar Receta</button>
+        <a href="{{ url_for('recetas.lista') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+    </div>
+</form>
+
+<script>
+let insumoCount = 1;
+
+document.getElementById('agregar-insumo').addEventListener('click', function() {
+    const container = document.getElementById('insumos-container');
+    const template = container.querySelector('.insumo-row').cloneNode(true);
+    template.setAttribute('data-index', insumoCount);
+    template.querySelectorAll('input').forEach(function(inp) { inp.value = ''; });
+    template.querySelectorAll('select').forEach(function(sel) { sel.selectedIndex = 0; });
+    const timeInput = template.querySelector('input[name="insumo_tiempo[]"]');
+    if (timeInput) timeInput.value = '60';
+    container.appendChild(template);
+    insumoCount++;
+    bindRowEvents(template);
+});
+
+document.querySelectorAll('.insumo-row').forEach(bindRowEvents);
+
+function bindRowEvents(row) {
+    row.querySelector('.eliminar-fila')?.addEventListener('click', function() {
+        if (document.querySelectorAll('.insumo-row').length > 1) {
+            row.remove();
+            actualizarCalculos();
+        }
+    });
+    row.querySelector('.insumo-tipo')?.addEventListener('change', function() {
+        actualizarVisibilidad(row);
+        actualizarCalculos();
+    });
+    row.querySelectorAll('input, select').forEach(function(el) {
+        el.addEventListener('change', actualizarCalculos);
+        el.addEventListener('input', actualizarCalculos);
+    });
+    actualizarVisibilidad(row);
+}
+
+function actualizarVisibilidad(row) {
+    const tipo = row.querySelector('.insumo-tipo')?.value;
+    const lupulo = row.querySelectorAll('.lupulo-campos');
+    lupulo.forEach(function(el) {
+        el.style.display = tipo === 'lupulo' ? '' : 'none';
+    });
+}
+
+function actualizarCalculos() {
+    const og = parseFloat(document.getElementById('og').value) || 1.050;
+    const fg = parseFloat(document.querySelector('input[name="fg_objetivo"]').value) || 1.012;
+    const volumenL = parseFloat(document.getElementById('volumen').value) || 20;
+    const volumenGal = volumenL * 0.264172;
+
+    let ibuTotal = 0;
+    let srmTotal = 0;
+
+    document.querySelectorAll('.insumo-row').forEach(function(row) {
+        const tipo = row.querySelector('.insumo-tipo').value;
+        const cant = parseFloat(row.querySelector('input[name="insumo_cantidad[]"]').value) || 0;
+        const unidad = row.querySelector('select[name="insumo_unidad[]"]').value;
+        const tiempo = parseInt(row.querySelector('input[name="insumo_tiempo[]"]')?.value) || 0;
+        const sel = row.querySelector('select[name="insumo_ingrediente_id[]"]');
+        if (!sel || !sel.selectedOptions[0]) return;
+        const opt = sel.selectedOptions[0];
+        const alpha = parseFloat(opt.getAttribute('data-alpha')) || 0;
+        const lovibond = parseFloat(opt.getAttribute('data-lovibond')) || 0;
+
+        if (tipo === 'lupulo' && alpha > 0 && tiempo > 0 && cant > 0) {
+            const cantGramos = unidad === 'g' ? cant : (unidad === 'kg' ? cant * 1000 : (unidad === 'oz' ? cant * 28.3495 : cant));
+            const bf = 1.65 * Math.pow(0.000125, (og - 1));
+            const btf = (1 - Math.exp(-0.04 * tiempo)) / 4.15;
+            ibuTotal += (alpha * bf * btf * cantGramos * 1000) / (volumenL * 10) * 0.9;
+        }
+
+        if (tipo === 'malta' && lovibond > 0 && cant > 0) {
+            const pesoLbs = unidad === 'lb' ? cant : (unidad === 'kg' ? cant * 2.20462 : (unidad === 'g' ? cant * 0.00220462 : cant));
+            const mcu = (lovibond * pesoLbs) / (volumenGal || 1);
+            srmTotal += 1.4922 * Math.pow(mcu, 0.6859);
+        }
+    });
+
+    const abv = (og - fg) * 131.25;
+    const atten = og > 1 ? ((og - fg) / (og - 1)) * 100 : 0;
+
+    document.getElementById('calc-abv').textContent = abv.toFixed(1) + '%';
+    document.getElementById('calc-ibu').textContent = Math.round(ibuTotal) + ' IBU';
+    document.getElementById('calc-color').textContent = Math.round(srmTotal) + ' SRM';
+    document.getElementById('calc-atten').textContent = Math.round(atten) + '%';
+}
+
+actualizarCalculos();
+</script>
+
+{% endblock %}

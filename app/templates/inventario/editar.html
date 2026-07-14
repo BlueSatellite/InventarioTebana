@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Editar {{ ingrediente.nombre }} - Inventario{% endblock %}
+{% block content %}
+
+<div class="flex items-center mb-4">
+    <a href="{{ url_for('inventario.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Editar: {{ ingrediente.nombre }}</h1>
+</div>
+
+<form method="POST" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-2xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Nombre *</label>
+            <input type="text" name="nombre" required value="{{ ingrediente.nombre }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Tipo *</label>
+            <select name="tipo" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none bg-white" id="tipo-select">
+                {% for t in tipos %}
+                <option value="{{ t }}" {{ 'selected' if ingrediente.tipo == t }}>{{ t|capitalize }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Cantidad</label>
+            <input type="number" name="cantidad" value="{{ ingrediente.cantidad }}" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Unidad</label>
+            <select name="unidad" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none bg-white">
+                <option value="kg" {{ 'selected' if ingrediente.unidad == 'kg' }}>kg</option>
+                <option value="g" {{ 'selected' if ingrediente.unidad == 'g' }}>g</option>
+                <option value="lb" {{ 'selected' if ingrediente.unidad == 'lb' }}>lb</option>
+                <option value="oz" {{ 'selected' if ingrediente.unidad == 'oz' }}>oz</option>
+                <option value="L" {{ 'selected' if ingrediente.unidad == 'L' }}>L</option>
+                <option value="unidad" {{ 'selected' if ingrediente.unidad == 'unidad' }}>unidad</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Stock minimo</label>
+            <input type="number" name="stock_minimo" value="{{ ingrediente.stock_minimo }}" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Precio ($)</label>
+            <input type="number" name="precio" value="{{ ingrediente.precio }}" step="0.01" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Lote interno / Proveedor</label>
+            <input type="text" name="lote_interno" value="{{ ingrediente.lote_interno or '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Fecha caducidad</label>
+            <input type="date" name="fecha_caducidad" value="{{ ingrediente.fecha_caducidad.strftime('%Y-%m-%d') if ingrediente.fecha_caducidad else '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="campo-alpha" class="{{ 'hidden' if ingrediente.tipo != 'lupulo' }}">
+            <label class="block text-sm font-medium text-gray-600 mb-1">% Alfa acido</label>
+            <input type="number" name="alpha_acido" value="{{ ingrediente.alpha_acido }}" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div id="campo-lovibond" class="{{ 'hidden' if ingrediente.tipo != 'malta' }}">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Lovibond (color)</label>
+            <input type="number" name="lovibond" value="{{ ingrediente.lovibond }}" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+        <textarea name="notas" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">{{ ingrediente.notas or '' }}</textarea>
+    </div>
+
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Guardar cambios</button>
+        <a href="{{ url_for('inventario.lista') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+        <form method="POST" action="{{ url_for('inventario.eliminar', id=ingrediente.id) }}" onsubmit="return confirm('Eliminar este ingrediente?');" class="inline">
+            <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2.5 rounded-lg text-sm font-medium transition">Eliminar</button>
+        </form>
+    </div>
+</form>
+
+<script>
+document.getElementById('tipo-select').addEventListener('change', function() {
+    const tipo = this.value;
+    document.getElementById('campo-alpha').classList.toggle('hidden', tipo !== 'lupulo');
+    document.getElementById('campo-lovibond').classList.toggle('hidden', tipo !== 'malta');
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Recetas - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold text-gray-800">Recetas</h1>
+    <a href="{{ url_for('recetas.nueva') }}" class="bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nueva Receta</a>
+</div>
+
+{% if recetas %}
+<div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-gray-500">
+            <tr>
+                <th class="text-left px-4 py-3">Nombre</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Estilo</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">OG</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">IBU</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">ABV</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for receta in recetas %}
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <td class="px-4 py-3">
+                    <a href="{{ url_for('recetas.ver', id=receta.id) }}" class="text-blue-600 font-medium">{{ receta.nombre }}</a>
+                </td>
+                <td class="px-4 py-3 hidden md:table-cell text-gray-600">{{ receta.estilo or '-' }}</td>
+                <td class="px-4 py-3 hidden md:table-cell">{{ "%.3f"|format(receta.og_objetivo) if receta.og_objetivo else '-' }}</td>
+                <td class="px-4 py-3 hidden md:table-cell">{{ "%.0f"|format(receta.ibu_objetivo) if receta.ibu_objetivo else '-' }}</td>
+                <td class="px-4 py-3 hidden md:table-cell">
+                    {% if receta.og_objetivo and receta.fg_objetivo %}
+                    {{ "%.1f"|format((receta.og_objetivo - receta.fg_objetivo) * 131.25) }}%
+                    {% else %}-{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+    <p class="text-4xl mb-3">&#x1F37A;</p>
+    <p>No hay recetas todavia. Crea la primera.</p>
+    <a href="{{ url_for('recetas.nueva') }}" class="inline-block mt-4 bg-beer-500 hover:bg-beer-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">+ Nueva Receta</a>
+</div>
+{% endif %}
+
+{% endblock %}

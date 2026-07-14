@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Cliente - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center mb-4">
+    <a href="{{ url_for('clientes.lista') }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Nuevo Cliente</h1>
+</div>
+
+<form method="POST" class="bg-white rounded-xl shadow p-6 space-y-4 max-w-2xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Nombre *</label>
+            <input type="text" name="nombre" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Contacto</label>
+            <input type="text" name="contacto" placeholder="Telefono, email..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Tipo</label>
+            <select name="tipo" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none bg-white">
+                <option value="">-</option>
+                <option value="bar">Bar</option>
+                <option value="restaurante">Restaurante</option>
+                <option value="retail">Retail</option>
+                <option value="particular">Particular</option>
+                <option value="otro">Otro</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Direccion</label>
+            <input type="text" name="direccion" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+        <textarea name="notas" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none"></textarea>
+    </div>
+    <div class="flex gap-3 pt-2">
+        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Guardar</button>
+        <a href="{{ url_for('clientes.lista') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+    </div>
+</form>
+
+{% endblock %}

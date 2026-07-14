@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Editar Receta - Cerveceria{% endblock %}
+{% block content %}
+
+<div class="flex items-center mb-4">
+    <a href="{{ url_for('recetas.ver', id=receta.id) }}" class="text-gray-500 hover:text-gray-700 mr-2">&larr;</a>
+    <h1 class="text-2xl font-bold text-gray-800">Editar: {{ receta.nombre }}</h1>
+</div>
+
+<form method="POST" class="space-y-6">
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="font-bold text-gray-700 mb-4">Datos generales</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Nombre *</label>
+                <input type="text" name="nombre" required value="{{ receta.nombre }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Estilo</label>
+                <input type="text" name="estilo" value="{{ receta.estilo or '' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Volumen objetivo (L)</label>
+                <input type="number" name="volumen_objetivo_l" value="{{ receta.volumen_objetivo_l }}" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Eficiencia (%)</label>
+                <input type="number" name="eficiencia" value="{{ receta.eficiencia }}" step="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">OG objetivo</label>
+                <input type="number" name="og_objetivo" value="{{ "%.3f"|format(receta.og_objetivo) if receta.og_objetivo else '1.050' }}" step="0.001" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">FG objetivo</label>
+                <input type="number" name="fg_objetivo" value="{{ "%.3f"|format(receta.fg_objetivo) if receta.fg_objetivo else '1.012' }}" step="0.001" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">
+            </div>
+        </div>
+        <div class="mt-3">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+            <textarea name="notas" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-beer-300 focus:border-beer-400 outline-none">{{ receta.notas or '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="font-bold text-gray-700 mb-4">Ingredientes</h2>
+        <div id="insumos-container" class="space-y-3">
+            {% for insumo in receta.insumos %}
+            <div class="insumo-row grid grid-cols-12 gap-2 items-end border-b border-gray-100 pb-3" data-index="{{ loop.index0 }}">
+                <div class="col-span-3 md:col-span-2">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
+                    <select name="insumo_tipo[]" class="insumo-tipo w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="malta" {{ 'selected' if insumo.ingrediente.tipo == 'malta' }}>Malta</option>
+                        <option value="lupulo" {{ 'selected' if insumo.ingrediente.tipo == 'lupulo' }}>Lupulo</option>
+                        <option value="levadura" {{ 'selected' if insumo.ingrediente.tipo == 'levadura' }}>Levadura</option>
+                        <option value="adjunto" {{ 'selected' if insumo.ingrediente.tipo == 'adjunto' }}>Adjunto</option>
+                    </select>
+                </div>
+                <div class="col-span-5 md:col-span-4">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Ingrediente</label>
+                    <select name="insumo_ingrediente_id[]" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        {% for ing in ingredientes %}
+                        <option value="{{ ing.id }}" data-tipo="{{ ing.tipo }}" data-alpha="{{ ing.alpha_acido }}" data-lovibond="{{ ing.lovibond }}" {{ 'selected' if ing.id == insumo.ingrediente_id }}>{{ ing.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Cant.</label>
+                    <input type="number" name="insumo_cantidad[]" step="0.01" value="{{ insumo.cantidad }}" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
+                </div>
+                <div class="col-span-1 md:col-span-1">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Unidad</label>
+                    <select name="insumo_unidad[]" class="w-full border border-gray-300 rounded-lg px-1 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="kg" {{ 'selected' if insumo.unidad == 'kg' }}>kg</option>
+                        <option value="g" {{ 'selected' if insumo.unidad == 'g' }}>g</option>
+                        <option value="lb" {{ 'selected' if insumo.unidad == 'lb' }}>lb</option>
+                        <option value="oz" {{ 'selected' if insumo.unidad == 'oz' }}>oz</option>
+                        <option value="L" {{ 'selected' if insumo.unidad == 'L' }}>L</option>
+                    </select>
+                </div>
+                <div class="col-span-2 md:col-span-1 lupulo-campos" style="{{ '' if insumo.ingrediente.tipo == 'lupulo' else 'display:none' }}">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Tiempo (min)</label>
+                    <input type="number" name="insumo_tiempo[]" value="{{ insumo.tiempo }}" class="w-full border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none">
+                </div>
+                <div class="col-span-2 md:col-span-1 lupulo-campos" style="{{ '' if insumo.ingrediente.tipo == 'lupulo' else 'display:none' }}">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Uso</label>
+                    <select name="insumo_uso[]" class="w-full border border-gray-300 rounded-lg px-1 py-2 text-sm focus:ring-2 focus:ring-beer-300 outline-none bg-white">
+                        <option value="amargor" {{ 'selected' if insumo.uso == 'amargor' }}>Amargor</option>
+                        <option value="sabor" {{ 'selected' if insumo.uso == 'sabor' }}>Sabor</option>
+                        <option value="aroma" {{ 'selected' if insumo.uso == 'aroma' }}>Aroma</option>
+                        <option value="dry-hop" {{ 'selected' if insumo.uso == 'dry-hop' }}>Dry Hop</option>
+                    </select>
+                </div>
+                <div class="col-span-1 hidden md:block">
+                    <button type="button" class="eliminar-fila text-red-400 hover:text-red-600 text-lg" title="Eliminar">&times;</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="agregar-insumo" class="mt-3 text-sm text-beer-600 hover:text-beer-700 font-medium">
+            + Agregar ingrediente
+        </button>
+    </div>
+
+    <div class="flex gap-3">
+        <button type="submit" class="bg-beer-500 hover:bg-beer-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition">Guardar cambios</button>
+        <a href="{{ url_for('recetas.ver', id=receta.id) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition">Cancelar</a>
+    </div>
+</form>
+
+<script>
+let insumoCount = {{ receta.insumos|length }};
+
+document.getElementById('agregar-insumo').addEventListener('click', function() {
+    const container = document.getElementById('insumos-container');
+    const template = container.querySelector('.insumo-row').cloneNode(true);
+    template.setAttribute('data-index', insumoCount);
+    template.querySelectorAll('input').forEach(function(inp) { if (inp.type !== 'hidden') inp.value = ''; });
+    template.querySelectorAll('select').forEach(function(sel) { sel.selectedIndex = 0; });
+    const timeInput = template.querySelector('input[name="insumo_tiempo[]"]');
+    if (timeInput) timeInput.value = '60';
+    container.appendChild(template);
+    insumoCount++;
+    bindRowEvents(template);
+});
+
+document.querySelectorAll('.insumo-row').forEach(bindRowEvents);
+
+function bindRowEvents(row) {
+    row.querySelector('.eliminar-fila')?.addEventListener('click', function() {
+        if (document.querySelectorAll('.insumo-row').length > 1) row.remove();
+    });
+    row.querySelector('.insumo-tipo')?.addEventListener('change', function() {
+        const lupulo = row.querySelectorAll('.lupulo-campos');
+        lupulo.forEach(function(el) { el.style.display = this.value === 'lupulo' ? '' : 'none'; });
+    });
+}
+</script>
+
+{% endblock %}
