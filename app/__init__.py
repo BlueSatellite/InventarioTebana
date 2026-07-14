@@ -10,7 +10,9 @@ def create_app():
     basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "cerveceria.db")}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'dev-key-change-in-production'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'cerveceria-secreta-2024')
+
+    os.makedirs(basedir, exist_ok=True)
 
     db.init_app(app)
 
